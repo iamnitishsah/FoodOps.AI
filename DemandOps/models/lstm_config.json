@@ -1,0 +1,30 @@
+{
+  "params": {
+    "window": 16,
+    "hidden": 128,
+    "layers": 2,
+    "emb_c": 16,
+    "emb_m": 8,
+    "dropout": 0.0013863598358501493,
+    "lr": 0.0026211820037290567,
+    "weight_decay": 4.2510107524864146e-05,
+    "batch": 512
+  },
+  "best_epoch": 5,
+  "n_trials": 68,
+  "search_minutes": 40,
+  "best_tune_wape": 25.78587429607338,
+  "train_weeks": [
+    1,
+    131
+  ],
+  "eval_weeks": [
+    132,
+    145
+  ],
+  "metrics": {
+    "wape": 29.846144480281556,
+    "mape": 50.787572276051954,
+    "bias": -1.7030821701538357
+  }
+}
