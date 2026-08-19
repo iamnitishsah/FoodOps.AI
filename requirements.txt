@@ -21,6 +21,7 @@ idna==3.20
 ipykernel==7.4.0
 ipython==9.17.1
 ipython_pygments_lexers==1.1.1
+ipywidgets==8.1.9
 itsdangerous==2.2.0
 jedi==0.20.0
 Jinja2==3.1.6
@@ -29,6 +30,7 @@ jsonschema==4.26.0
 jsonschema-specifications==2025.9.1
 jupyter_client==8.10.0
 jupyter_core==5.9.1
+jupyterlab_widgets==3.0.17
 kiwisolver==1.5.1
 lightgbm==4.7.0
 MarkupSafe==3.0.4
@@ -81,3 +83,4 @@ urllib3==2.8.0
 uvicorn==0.54.0
 wcwidth==0.9.1
 websockets==17.1
+widgetsnbextension==4.0.16
