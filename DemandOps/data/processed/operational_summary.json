@@ -1,0 +1,696 @@
+{
+  "by_category": [
+    {
+      "category": "Beverages",
+      "total_orders": 40480525,
+      "avg_checkout_price": 213.26402353585112,
+      "unique_meals": 12
+    },
+    {
+      "category": "Biryani",
+      "total_orders": 631848,
+      "avg_checkout_price": 450.4051557194139,
+      "unique_meals": 3
+    },
+    {
+      "category": "Desert",
+      "total_orders": 1940754,
+      "avg_checkout_price": 437.6001662456476,
+      "unique_meals": 3
+    },
+    {
+      "category": "Extras",
+      "total_orders": 3984979,
+      "avg_checkout_price": 173.1932989234626,
+      "unique_meals": 3
+    },
+    {
+      "category": "Fish",
+      "total_orders": 871959,
+      "avg_checkout_price": 578.9920801020909,
+      "unique_meals": 3
+    },
+    {
+      "category": "Other Snacks",
+      "total_orders": 4766293,
+      "avg_checkout_price": 258.1323683583512,
+      "unique_meals": 3
+    },
+    {
+      "category": "Pasta",
+      "total_orders": 1637744,
+      "avg_checkout_price": 395.6632104426951,
+      "unique_meals": 3
+    },
+    {
+      "category": "Pizza",
+      "total_orders": 7383720,
+      "avg_checkout_price": 584.0041462973021,
+      "unique_meals": 3
+    },
+    {
+      "category": "Rice Bowl",
+      "total_orders": 20874063,
+      "avg_checkout_price": 317.53224018199234,
+      "unique_meals": 3
+    },
+    {
+      "category": "Salad",
+      "total_orders": 10944336,
+      "avg_checkout_price": 290.95543961623304,
+      "unique_meals": 3
+    },
+    {
+      "category": "Sandwich",
+      "total_orders": 17636782,
+      "avg_checkout_price": 289.9889985281307,
+      "unique_meals": 3
+    },
+    {
+      "category": "Seafood",
+      "total_orders": 2715714,
+      "avg_checkout_price": 610.5985499331252,
+      "unique_meals": 3
+    },
+    {
+      "category": "Soup",
+      "total_orders": 1039646,
+      "avg_checkout_price": 222.9496142011834,
+      "unique_meals": 3
+    },
+    {
+      "category": "Starters",
+      "total_orders": 4649122,
+      "avg_checkout_price": 278.27199692729033,
+      "unique_meals": 3
+    }
+  ],
+  "by_cuisine": [
+    {
+      "cuisine": "Continental",
+      "total_orders": 16914439,
+      "avg_checkout_price": 515.978809280607,
+      "unique_meals": 12
+    },
+    {
+      "cuisine": "Indian",
+      "total_orders": 25792544,
+      "avg_checkout_price": 340.76983252228894,
+      "unique_meals": 12
+    },
+    {
+      "cuisine": "Italian",
+      "total_orders": 44172832,
+      "avg_checkout_price": 285.1331023794997,
+      "unique_meals": 12
+    },
+    {
+      "cuisine": "Thai",
+      "total_orders": 32677670,
+      "avg_checkout_price": 213.32323450294376,
+      "unique_meals": 15
+    }
+  ],
+  "weekly_platform_demand": [
+    {
+      "week": 1,
+      "num_orders": 792261
+    },
+    {
+      "week": 2,
+      "num_orders": 787084
+    },
+    {
+      "week": 3,
+      "num_orders": 695262
+    },
+    {
+      "week": 4,
+      "num_orders": 743529
+    },
+    {
+      "week": 5,
+      "num_orders": 1198675
+    },
+    {
+      "week": 6,
+      "num_orders": 947288
+    },
+    {
+      "week": 7,
+      "num_orders": 934803
+    },
+    {
+      "week": 8,
+      "num_orders": 670518
+    },
+    {
+      "week": 9,
+      "num_orders": 723243
+    },
+    {
+      "week": 10,
+      "num_orders": 811825
+    },
+    {
+      "week": 11,
+      "num_orders": 772225
+    },
+    {
+      "week": 12,
+      "num_orders": 690259
+    },
+    {
+      "week": 13,
+      "num_orders": 656102
+    },
+    {
+      "week": 14,
+      "num_orders": 636981
+    },
+    {
+      "week": 15,
+      "num_orders": 651719
+    },
+    {
+      "week": 16,
+      "num_orders": 611515
+    },
+    {
+      "week": 17,
+      "num_orders": 820285
+    },
+    {
+      "week": 18,
+      "num_orders": 932560
+    },
+    {
+      "week": 19,
+      "num_orders": 787196
+    },
+    {
+      "week": 20,
+      "num_orders": 677834
+    },
+    {
+      "week": 21,
+      "num_orders": 707013
+    },
+    {
+      "week": 22,
+      "num_orders": 834111
+    },
+    {
+      "week": 23,
+      "num_orders": 773271
+    },
+    {
+      "week": 24,
+      "num_orders": 647341
+    },
+    {
+      "week": 25,
+      "num_orders": 749583
+    },
+    {
+      "week": 26,
+      "num_orders": 805805
+    },
+    {
+      "week": 27,
+      "num_orders": 740014
+    },
+    {
+      "week": 28,
+      "num_orders": 648863
+    },
+    {
+      "week": 29,
+      "num_orders": 625414
+    },
+    {
+      "week": 30,
+      "num_orders": 915399
+    },
+    {
+      "week": 31,
+      "num_orders": 783214
+    },
+    {
+      "week": 32,
+      "num_orders": 1034202
+    },
+    {
+      "week": 33,
+      "num_orders": 730936
+    },
+    {
+      "week": 34,
+      "num_orders": 693603
+    },
+    {
+      "week": 35,
+      "num_orders": 630458
+    },
+    {
+      "week": 36,
+      "num_orders": 724865
+    },
+    {
+      "week": 37,
+      "num_orders": 877853
+    },
+    {
+      "week": 38,
+      "num_orders": 974566
+    },
+    {
+      "week": 39,
+      "num_orders": 770964
+    },
+    {
+      "week": 40,
+      "num_orders": 807159
+    },
+    {
+      "week": 41,
+      "num_orders": 791493
+    },
+    {
+      "week": 42,
+      "num_orders": 766289
+    },
+    {
+      "week": 43,
+      "num_orders": 693271
+    },
+    {
+      "week": 44,
+      "num_orders": 738583
+    },
+    {
+      "week": 45,
+      "num_orders": 981199
+    },
+    {
+      "week": 46,
+      "num_orders": 862620
+    },
+    {
+      "week": 47,
+      "num_orders": 808269
+    },
+    {
+      "week": 48,
+      "num_orders": 1303457
+    },
+    {
+      "week": 49,
+      "num_orders": 936980
+    },
+    {
+      "week": 50,
+      "num_orders": 890778
+    },
+    {
+      "week": 51,
+      "num_orders": 723036
+    },
+    {
+      "week": 52,
+      "num_orders": 1046811
+    },
+    {
+      "week": 53,
+      "num_orders": 1108236
+    },
+    {
+      "week": 54,
+      "num_orders": 757268
+    },
+    {
+      "week": 55,
+      "num_orders": 875145
+    },
+    {
+      "week": 56,
+      "num_orders": 843250
+    },
+    {
+      "week": 57,
+      "num_orders": 916721
+    },
+    {
+      "week": 58,
+      "num_orders": 834445
+    },
+    {
+      "week": 59,
+      "num_orders": 776781
+    },
+    {
+      "week": 60,
+      "num_orders": 1131459
+    },
+    {
+      "week": 61,
+      "num_orders": 860105
+    },
+    {
+      "week": 62,
+      "num_orders": 380065
+    },
+    {
+      "week": 63,
+      "num_orders": 812075
+    },
+    {
+      "week": 64,
+      "num_orders": 784508
+    },
+    {
+      "week": 65,
+      "num_orders": 844869
+    },
+    {
+      "week": 66,
+      "num_orders": 710083
+    },
+    {
+      "week": 67,
+      "num_orders": 756281
+    },
+    {
+      "week": 68,
+      "num_orders": 1009974
+    },
+    {
+      "week": 69,
+      "num_orders": 1075188
+    },
+    {
+      "week": 70,
+      "num_orders": 1004649
+    },
+    {
+      "week": 71,
+      "num_orders": 1015726
+    },
+    {
+      "week": 72,
+      "num_orders": 732551
+    },
+    {
+      "week": 73,
+      "num_orders": 702678
+    },
+    {
+      "week": 74,
+      "num_orders": 789591
+    },
+    {
+      "week": 75,
+      "num_orders": 970760
+    },
+    {
+      "week": 76,
+      "num_orders": 902928
+    },
+    {
+      "week": 77,
+      "num_orders": 833394
+    },
+    {
+      "week": 78,
+      "num_orders": 862030
+    },
+    {
+      "week": 79,
+      "num_orders": 1004611
+    },
+    {
+      "week": 80,
+      "num_orders": 698063
+    },
+    {
+      "week": 81,
+      "num_orders": 681412
+    },
+    {
+      "week": 82,
+      "num_orders": 859477
+    },
+    {
+      "week": 83,
+      "num_orders": 900091
+    },
+    {
+      "week": 84,
+      "num_orders": 768315
+    },
+    {
+      "week": 85,
+      "num_orders": 860433
+    },
+    {
+      "week": 86,
+      "num_orders": 823515
+    },
+    {
+      "week": 87,
+      "num_orders": 805140
+    },
+    {
+      "week": 88,
+      "num_orders": 745193
+    },
+    {
+      "week": 89,
+      "num_orders": 743489
+    },
+    {
+      "week": 90,
+      "num_orders": 849868
+    },
+    {
+      "week": 91,
+      "num_orders": 834397
+    },
+    {
+      "week": 92,
+      "num_orders": 908145
+    },
+    {
+      "week": 93,
+      "num_orders": 900170
+    },
+    {
+      "week": 94,
+      "num_orders": 825030
+    },
+    {
+      "week": 95,
+      "num_orders": 905841
+    },
+    {
+      "week": 96,
+      "num_orders": 765117
+    },
+    {
+      "week": 97,
+      "num_orders": 609977
+    },
+    {
+      "week": 98,
+      "num_orders": 894021
+    },
+    {
+      "week": 99,
+      "num_orders": 742048
+    },
+    {
+      "week": 100,
+      "num_orders": 1088162
+    },
+    {
+      "week": 101,
+      "num_orders": 999447
+    },
+    {
+      "week": 102,
+      "num_orders": 890983
+    },
+    {
+      "week": 103,
+      "num_orders": 713569
+    },
+    {
+      "week": 104,
+      "num_orders": 774644
+    },
+    {
+      "week": 105,
+      "num_orders": 891479
+    },
+    {
+      "week": 106,
+      "num_orders": 847485
+    },
+    {
+      "week": 107,
+      "num_orders": 783851
+    },
+    {
+      "week": 108,
+      "num_orders": 908764
+    },
+    {
+      "week": 109,
+      "num_orders": 1068318
+    },
+    {
+      "week": 110,
+      "num_orders": 889255
+    },
+    {
+      "week": 111,
+      "num_orders": 892631
+    },
+    {
+      "week": 112,
+      "num_orders": 852107
+    },
+    {
+      "week": 113,
+      "num_orders": 889696
+    },
+    {
+      "week": 114,
+      "num_orders": 813601
+    },
+    {
+      "week": 115,
+      "num_orders": 805469
+    },
+    {
+      "week": 116,
+      "num_orders": 855465
+    },
+    {
+      "week": 117,
+      "num_orders": 809625
+    },
+    {
+      "week": 118,
+      "num_orders": 777707
+    },
+    {
+      "week": 119,
+      "num_orders": 811709
+    },
+    {
+      "week": 120,
+      "num_orders": 753871
+    },
+    {
+      "week": 121,
+      "num_orders": 950500
+    },
+    {
+      "week": 122,
+      "num_orders": 944706
+    },
+    {
+      "week": 123,
+      "num_orders": 889926
+    },
+    {
+      "week": 124,
+      "num_orders": 827257
+    },
+    {
+      "week": 125,
+      "num_orders": 750541
+    },
+    {
+      "week": 126,
+      "num_orders": 810838
+    },
+    {
+      "week": 127,
+      "num_orders": 762737
+    },
+    {
+      "week": 128,
+      "num_orders": 878397
+    },
+    {
+      "week": 129,
+      "num_orders": 843661
+    },
+    {
+      "week": 130,
+      "num_orders": 920019
+    },
+    {
+      "week": 131,
+      "num_orders": 899953
+    },
+    {
+      "week": 132,
+      "num_orders": 939374
+    },
+    {
+      "week": 133,
+      "num_orders": 835583
+    },
+    {
+      "week": 134,
+      "num_orders": 975072
+    },
+    {
+      "week": 135,
+      "num_orders": 777106
+    },
+    {
+      "week": 136,
+      "num_orders": 769623
+    },
+    {
+      "week": 137,
+      "num_orders": 719740
+    },
+    {
+      "week": 138,
+      "num_orders": 667343
+    },
+    {
+      "week": 139,
+      "num_orders": 751935
+    },
+    {
+      "week": 140,
+      "num_orders": 802689
+    },
+    {
+      "week": 141,
+      "num_orders": 776240
+    },
+    {
+      "week": 142,
+      "num_orders": 739661
+    },
+    {
+      "week": 143,
+      "num_orders": 759926
+    },
+    {
+      "week": 144,
+      "num_orders": 801197
+    },
+    {
+      "week": 145,
+      "num_orders": 671926
+    }
+  ]
+}
