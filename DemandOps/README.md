@@ -9,7 +9,7 @@
 - **Goal:** Predict weekly order demand (`num_orders`) for each `(center_id, meal_id)` pair for upcoming operational weeks.
 - **Horizon:** 10 weeks forward out-of-sample (weeks 146 to 155).
 - **Core Challenge:** Over-predicting causes perishable food waste and excessive storage overhead; under-predicting leads to kitchen stockouts, order cancellations, and delayed dispatch.
-- **Target Transformation:** $\log(1 + \texttt{num\_orders})$ to stabilize right-skewed demand variance and heavy-tail spikes. Predictions are inverted back to raw order counts via $\max(0, \exp(\hat{y}_{\log}) - 1)$.
+- **Target Transformation:** $\log(1 + \text{num_orders})$ to stabilize right-skewed demand variance and heavy-tail spikes. Predictions are inverted back to raw order counts via $\max(0, \exp(\hat{y}_{\log}) - 1)$.
 
 ---
 
