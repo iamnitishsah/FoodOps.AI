@@ -67,6 +67,8 @@ Each module:
 ### Operational Problem
 Decentralized fulfillment centers face a severe tradeoff: over-predicting weekly dish demand leads to perishable food waste and cold-chain storage overload; under-predicting causes kitchen stockouts, canceled orders, and delayed deliveries. DemandOps forecasts weekly order volume (`num_orders`) for each `(center_id, meal_id)` combination across a decentralized fulfillment center network (77 hubs, 51 dishes, 14 categories, 4 cuisines, 119.5M historical meals).
 
+- **Primary Dataset Source:** [Food Demand Forecasting (Kaggle)](https://www.kaggle.com/datasets/kannanaikkal/food-demand-forecasting)
+
 ### Technical Highlights
 - **Leakage-Free Temporal Validation:** Trained strictly on historical weeks 1 to 131 and evaluated on unseen hold-out weeks 132 to 145 (14 continuous weeks) to prevent lookahead bias.
 - **Supply Chain Feature Engineering:** Autoregressive lags (`lag_1`, `lag_2`, `lag_4`), 4-week rolling statistics (`rolling_mean_4`, `rolling_std_4`), non-linear discount elasticity (`price_change_pct`), promotional indicators (`emailer_for_promotion`, `homepage_featured`), calendar seasonality (`week_of_year`), and center/meal categorical metadata.

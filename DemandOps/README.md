@@ -62,6 +62,8 @@ DemandOps solves this operational challenge by transforming raw transactional lo
 
 The module leverages transactional fulfillment records covering **119.5 million historical meal orders** across 77 fulfillment hubs:
 
+- **Primary Dataset Source:** [Food Demand Forecasting (Kaggle)](https://www.kaggle.com/datasets/kannanaikkal/food-demand-forecasting)
+
 | Dataset File | Granularity | Scope / Dimensions | Key Attributes |
 | :--- | :--- | :--- | :--- |
 | [`data/raw/train.csv`](./data/raw/) | `(center_id, meal_id, week)` | 456,548 records (Weeks 1–145) | `id`, `week`, `center_id`, `meal_id`, `checkout_price`, `base_price`, `emailer_for_promotion`, `homepage_featured`, `num_orders` |
