@@ -68,9 +68,6 @@ The interactive operations dashboard is located at [`app/streamlit_app.py`](app/
    - Portfolio breakdown across 119.5M historical orders, 14 categories, and 4 cuisines.
    - Category demand distribution and cuisine share.
    - Multi-year weekly platform order trends.
-4. **📋 Out-of-Sample Test Forecasts:**
-   - Summary statistics of the 10-week forward test predictions.
-   - Interactive data table and one-click download for `submission_lgb.csv`.
 
 ---
 
@@ -87,6 +84,7 @@ streamlit run DemandOps/app/streamlit_app.py
 ```
 
 The application will open automatically at `http://localhost:8501`.
+Deployed Link:- [https://foodops-ai-demandops.streamlit.app/](https://foodops-ai-demandops.streamlit.app/)
 
 ---
 

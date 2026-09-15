@@ -109,9 +109,9 @@ if not model_loaded:
 
 # Primary Navigation Tabs
 tab_pred, tab_benchmarks, tab_analytics = st.tabs([
-    "🔮 Forecast & What-If Simulator",
-    "📊 Model Benchmarks & Evaluation",
-    "🍲 Portfolio & Kitchen Analytics"
+    "Forecast & What-If Simulator",
+    "Model Benchmarks & Evaluation",
+    "Portfolio & Kitchen Analytics"
 ])
 
 
@@ -347,41 +347,76 @@ with tab_pred:
             name="Demand Curve (Orders)",
             line=dict(color=ACCENT_COLOR, width=2.8),
             marker=dict(size=5, color=ACCENT_COLOR),
+            hovertemplate="Price: $%{x:.2f}<br>Forecast: %{y:,.0f} orders<extra></extra>",
         ))
 
         # Current Operational Price Marker
         fig_price.add_trace(go.Scatter(
             x=[checkout_price],
             y=[pred_orders],
-            mode="markers+text",
+            mode="markers",
             name="Current Price",
-            text=[f"Current: ${checkout_price:.2f}"],
-            textposition="top center",
-            marker=dict(size=11, symbol="star", color="#3b82f6", line=dict(color="#1d4ed8", width=1.5)),
+            marker=dict(size=12, symbol="star", color="#3b82f6", line=dict(color="#1d4ed8", width=1.8)),
+            hovertemplate=f"Current Price: ${checkout_price:.2f}<br>Forecast: {pred_orders:,.0f} orders<extra></extra>",
         ))
 
         # Optimal Revenue Price Marker
         fig_price.add_trace(go.Scatter(
             x=[opt_price],
             y=[opt_orders],
-            mode="markers+text",
+            mode="markers",
             name="Revenue Optimal Price",
-            text=[f"Max Rev: ${opt_price:.2f}"],
-            textposition="bottom center",
-            marker=dict(size=10, symbol="diamond", color="#10b981", line=dict(color="#047857", width=1.5)),
+            marker=dict(size=11, symbol="diamond", color="#10b981", line=dict(color="#047857", width=1.8)),
+            hovertemplate=f"Max Rev Price: ${opt_price:.2f}<br>Forecast: {opt_orders:,.0f} orders<br>Gross Rev: ${opt_rev:,.0f}<extra></extra>",
         ))
+
+        # High-contrast annotations with theme-adaptive badges
+        fig_price.add_annotation(
+            x=checkout_price,
+            y=pred_orders,
+            text=f"Current: ${checkout_price:.2f}",
+            showarrow=True,
+            arrowhead=2,
+            arrowsize=1,
+            arrowwidth=1.5,
+            arrowcolor="#3b82f6",
+            ax=0,
+            ay=-36,
+            bordercolor="#3b82f6",
+            borderwidth=1,
+            borderpad=4,
+            bgcolor="rgba(59, 130, 246, 0.12)",
+            font=dict(size=11),
+        )
+
+        fig_price.add_annotation(
+            x=opt_price,
+            y=opt_orders,
+            text=f"Max Rev: ${opt_price:.2f}",
+            showarrow=True,
+            arrowhead=2,
+            arrowsize=1,
+            arrowwidth=1.5,
+            arrowcolor="#10b981",
+            ax=0,
+            ay=36,
+            bordercolor="#10b981",
+            borderwidth=1,
+            borderpad=4,
+            bgcolor="rgba(16, 185, 129, 0.12)",
+            font=dict(size=11),
+        )
 
         chart_layout(
             fig_price,
             title=f"Price Elasticity for Meal {selected_meal_id} ({meal_row['category']})",
             xaxis_title="Checkout Price (₹ / $)",
             yaxis_title="Forecasted Weekly Orders",
-            height=310,
-            hovermode="x unified",
+            height=320,
             showlegend=True,
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
         )
-        st.plotly_chart(fig_price, use_container_width=True, theme="streamlit")
+        st.plotly_chart(fig_price, width="stretch", theme="streamlit")
 
         section("06", "Promotional Channel Lift Analysis", "Marginal impact of individual and combined marketing channels.")
 
@@ -393,12 +428,16 @@ with tab_pred:
             y="Predicted Orders",
             text="Predicted Orders",
             color="Scenario",
-            color_discrete_sequence=[ACCENT_COLOR, "#38bdf8", "#818cf8", "#22c55e"],
+            color_discrete_sequence=[ACCENT_COLOR, "#0284c7", "#6366f1", "#10b981"],
             title="Forecasted Demand Across Marketing Campaign Channels",
         )
-        fig_promo.update_traces(texttemplate="%{text:.0f}", textposition="outside")
-        chart_layout(fig_promo, height=270, showlegend=False)
-        st.plotly_chart(fig_promo, use_container_width=True, theme="streamlit")
+        fig_promo.update_traces(
+            texttemplate="%{text:,.0f}",
+            textposition="outside",
+            cliponaxis=False,
+        )
+        chart_layout(fig_promo, height=280, showlegend=False)
+        st.plotly_chart(fig_promo, width="stretch", theme="streamlit")
 
 
 # ==============================================================================
@@ -414,7 +453,7 @@ with tab_benchmarks:
     # Format Benchmarks DataFrame with clean column config
     st.dataframe(
         benchmarks_df,
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
         column_config={
             "Rank": st.column_config.NumberColumn("Rank", width="small"),
@@ -438,6 +477,15 @@ with tab_benchmarks:
 
     section("02", "Error Metric Comparison", "Comparison across WAPE (primary supply chain KPI) and MAPE.")
 
+    # High-contrast error scale: Green (low error) -> Blue -> Amber -> Red (high error)
+    # Avoids pastel washes to guarantee crisp bar visibility in both light and dark modes
+    error_scale = [
+        [0.0, "#10b981"],
+        [0.33, "#3b82f6"],
+        [0.66, "#f59e0b"],
+        [1.0, "#ef4444"],
+    ]
+
     b_col1, b_col2 = st.columns(2)
     with b_col1:
         fig_wape = px.bar(
@@ -447,17 +495,21 @@ with tab_benchmarks:
             orientation="h",
             text="Validation WAPE (%)",
             color="Validation WAPE (%)",
-            color_continuous_scale="Reds_r",
+            color_continuous_scale=error_scale,
             title="Validation WAPE (%) — Volume-Weighted Error (Lower is Better)",
         )
-        fig_wape.update_traces(texttemplate="%{text:.2f}%", textposition="outside")
+        fig_wape.update_traces(
+            texttemplate="%{text:.2f}%",
+            textposition="outside",
+            cliponaxis=False,
+        )
         chart_layout(
             fig_wape,
             height=340,
             yaxis=dict(autorange="reversed"),
             coloraxis_showscale=False,
         )
-        st.plotly_chart(fig_wape, use_container_width=True, theme="streamlit")
+        st.plotly_chart(fig_wape, width="stretch", theme="streamlit")
 
     with b_col2:
         fig_mape = px.bar(
@@ -467,17 +519,21 @@ with tab_benchmarks:
             orientation="h",
             text="Validation MAPE (%)",
             color="Validation MAPE (%)",
-            color_continuous_scale="Oranges_r",
+            color_continuous_scale=error_scale,
             title="Validation MAPE (%) — Average Item-Level Percentage Error",
         )
-        fig_mape.update_traces(texttemplate="%{text:.2f}%", textposition="outside")
+        fig_mape.update_traces(
+            texttemplate="%{text:.2f}%",
+            textposition="outside",
+            cliponaxis=False,
+        )
         chart_layout(
             fig_mape,
             height=340,
             yaxis=dict(autorange="reversed"),
             coloraxis_showscale=False,
         )
-        st.plotly_chart(fig_mape, use_container_width=True, theme="streamlit")
+        st.plotly_chart(fig_mape, width="stretch", theme="streamlit")
 
     section("03", "LightGBM Feature Importance (Gain & Splits)", "What drivers matter most for order volume prediction.")
 
@@ -492,12 +548,18 @@ with tab_benchmarks:
             x="Importance",
             y="Feature",
             orientation="h",
+            text="Importance",
             color="Importance",
-            color_continuous_scale="Viridis",
+            color_continuous_scale=[[0.0, "#0284c7"], [0.5, "#6366f1"], [1.0, ACCENT_COLOR]],
             title="Top 12 Predictive Features in Champion LightGBM Model",
         )
+        fig_fi.update_traces(
+            texttemplate="%{text:,.0f}",
+            textposition="outside",
+            cliponaxis=False,
+        )
         chart_layout(fig_fi, height=390, coloraxis_showscale=False)
-        st.plotly_chart(fig_fi, use_container_width=True, theme="streamlit")
+        st.plotly_chart(fig_fi, width="stretch", theme="streamlit")
     except Exception:
         st.info("Feature importance display unavailable for current model format.")
 
@@ -570,22 +632,26 @@ with tab_analytics:
                 orientation="h",
                 text="total_orders",
                 color="total_orders",
-                color_continuous_scale="Teal",
+                color_continuous_scale=[[0.0, "#0284c7"], [0.5, "#0d9488"], [1.0, "#10b981"]],
                 title="Total Historical Orders by Meal Category",
             )
-            fig_cat.update_traces(texttemplate="%{text:,.0f}", textposition="outside")
+            fig_cat.update_traces(
+                texttemplate="%{text:,.0f}",
+                textposition="outside",
+                cliponaxis=False,
+            )
             chart_layout(
                 fig_cat,
                 height=420,
                 yaxis=dict(autorange="reversed"),
                 coloraxis_showscale=False,
             )
-            st.plotly_chart(fig_cat, use_container_width=True, theme="streamlit")
+            st.plotly_chart(fig_cat, width="stretch", theme="streamlit")
 
     by_cuisine = summary_data.get("by_cuisine", [])
     if by_cuisine:
         cui_df = pd.DataFrame(by_cuisine)
-        cuisine_palette = [ACCENT_COLOR, "#38bdf8", "#10b981", "#fbbf24", "#f87171"]
+        cuisine_palette = [ACCENT_COLOR, "#0284c7", "#10b981", "#d97706", "#8b5cf6"]
         with a_col2:
             fig_cui = px.pie(
                 cui_df,
@@ -595,9 +661,12 @@ with tab_analytics:
                 color_discrete_sequence=cuisine_palette,
                 title="Historical Demand Share by Cuisine",
             )
-            fig_cui.update_traces(textinfo="percent+label")
+            fig_cui.update_traces(
+                textinfo="percent+label",
+                marker=dict(line=dict(color="rgba(128, 128, 128, 0.25)", width=1.5)),
+            )
             chart_layout(fig_cui, height=420)
-            st.plotly_chart(fig_cui, use_container_width=True, theme="streamlit")
+            st.plotly_chart(fig_cui, width="stretch", theme="streamlit")
 
     weekly_history = summary_data.get("weekly_platform_demand", [])
     if weekly_history:
@@ -610,11 +679,17 @@ with tab_analytics:
             markers=True,
             title="Total Platform Weekly Meal Demand (Historical Weeks 1–145)",
         )
-        fig_weekly.update_traces(line_color=ACCENT_COLOR, line_width=2.2, marker=dict(size=4))
+        fig_weekly.update_traces(
+            line_color=ACCENT_COLOR,
+            line_width=2.5,
+            marker=dict(size=4.5),
+            hovertemplate="Week %{x}<br>Orders: %{y:,.0f}<extra></extra>",
+        )
         chart_layout(
             fig_weekly,
             xaxis_title="Operational Week Number",
             yaxis_title="Total Network Orders",
-            height=310,
+            yaxis=dict(tickformat=","),
+            height=320,
         )
-        st.plotly_chart(fig_weekly, use_container_width=True, theme="streamlit")
+        st.plotly_chart(fig_weekly, width="stretch", theme="streamlit")

@@ -1,7 +1,7 @@
 """FoodOps.AI — Theme & UI Design System.
 
 Designed to dynamically harmonize with Streamlit's built-in Light and Dark themes
-using native CSS custom properties (--text-color, --background-color, --secondary-background-color).
+using native CSS custom properties and adaptive styling.
 Guarantees high contrast, professional typography, and responsive readability.
 """
 
@@ -15,7 +15,7 @@ CSS = textwrap.dedent("""
 <style>
 /* Global App Typography & Spacing adjustments */
 .block-container {
-    padding-top: 1.8rem;
+    padding-top: 3.3rem;
     padding-bottom: 2.5rem;
 }
 
@@ -42,7 +42,7 @@ CSS = textwrap.dedent("""
     display: flex;
     align-items: center;
     gap: 0.55rem;
-    color: var(--text-color);
+    color: inherit;
 }
 .fo-dot {
     width: 10px;
@@ -54,8 +54,8 @@ CSS = textwrap.dedent("""
 }
 .fo-tagline {
     font-size: 0.90rem;
-    color: var(--text-color);
-    opacity: 0.70;
+    color: inherit;
+    opacity: 0.72;
 }
 .fo-masthead-meta {
     display: flex;
@@ -69,22 +69,29 @@ CSS = textwrap.dedent("""
     gap: 0.4rem;
     font-size: 0.78rem;
     font-weight: 600;
-    padding: 0.2rem 0.65rem;
+    padding: 0.22rem 0.7rem;
     border-radius: 20px;
-    background: rgba(34, 197, 94, 0.15);
-    color: #22c55e;
-    border: 1px solid rgba(34, 197, 94, 0.3);
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.30);
+}
+@media (prefers-color-scheme: dark) {
+    .fo-status-badge {
+        background: rgba(34, 197, 94, 0.18);
+        color: #4ade80;
+        border: 1px solid rgba(34, 197, 94, 0.38);
+    }
 }
 .fo-status-dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #22c55e;
+    background: currentColor;
 }
 .fo-meta-sub {
     font-size: 0.78rem;
-    color: var(--text-color);
-    opacity: 0.60;
+    color: inherit;
+    opacity: 0.65;
 }
 
 /* Section Header */
@@ -97,9 +104,9 @@ CSS = textwrap.dedent("""
 .fo-section .fo-index {
     font-size: 0.75rem;
     font-weight: 700;
-    color: #FF6B35;
-    background: rgba(255, 107, 53, 0.12);
-    border: 1px solid rgba(255, 107, 53, 0.3);
+    color: #ea580c;
+    background: rgba(234, 88, 12, 0.12);
+    border: 1px solid rgba(234, 88, 12, 0.30);
     border-radius: 5px;
     width: 24px;
     height: 24px;
@@ -108,23 +115,30 @@ CSS = textwrap.dedent("""
     justify-content: center;
     flex-shrink: 0;
 }
+@media (prefers-color-scheme: dark) {
+    .fo-section .fo-index {
+        color: #FF6B35;
+        background: rgba(255, 107, 53, 0.16);
+        border: 1px solid rgba(255, 107, 53, 0.36);
+    }
+}
 .fo-section .fo-title {
     font-weight: 700;
     font-size: 1.05rem;
     letter-spacing: -0.01em;
-    color: var(--text-color);
+    color: inherit;
 }
 .fo-section .fo-rule {
     flex: 1;
     height: 1px;
-    background: rgba(128, 128, 128, 0.20);
+    background: rgba(128, 128, 128, 0.22);
 }
 .fo-section-note {
     font-size: 0.86rem;
-    color: var(--text-color);
-    opacity: 0.68;
+    color: inherit;
+    opacity: 0.72;
     margin: -0.25rem 0 0.9rem 0;
-    line-height: 1.4;
+    line-height: 1.45;
     max-width: 75ch;
 }
 
@@ -141,18 +155,32 @@ CSS = textwrap.dedent("""
     margin-bottom: 0.4rem;
 }
 .fo-badge.discount {
-    background: rgba(34, 197, 94, 0.14);
-    color: #22c55e;
-    border: 1px solid rgba(34, 197, 94, 0.32);
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.32);
+}
+@media (prefers-color-scheme: dark) {
+    .fo-badge.discount {
+        background: rgba(34, 197, 94, 0.18);
+        color: #4ade80;
+        border: 1px solid rgba(34, 197, 94, 0.40);
+    }
 }
 .fo-badge.markup {
-    background: rgba(239, 68, 68, 0.14);
-    color: #ef4444;
-    border: 1px solid rgba(239, 68, 68, 0.32);
+    background: rgba(239, 68, 68, 0.12);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.30);
+}
+@media (prefers-color-scheme: dark) {
+    .fo-badge.markup {
+        background: rgba(239, 68, 68, 0.20);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.42);
+    }
 }
 .fo-badge.neutral {
-    background: rgba(128, 128, 128, 0.12);
-    color: var(--text-color);
+    background: rgba(128, 128, 128, 0.10);
+    color: inherit;
     border: 1px solid rgba(128, 128, 128, 0.24);
 }
 .fo-swatch {
@@ -164,14 +192,14 @@ CSS = textwrap.dedent("""
 
 /* Callout Alert Box */
 .fo-callout {
-    background: var(--secondary-background-color);
+    background: var(--secondary-background-color, rgba(128, 128, 128, 0.08));
     border: 1px solid rgba(128, 128, 128, 0.22);
     border-left: 3.5px solid #3b82f6;
     border-radius: 8px;
     padding: 0.85rem 1.1rem;
     font-size: 0.88rem;
     line-height: 1.45;
-    color: var(--text-color);
+    color: inherit;
     margin: 0.7rem 0 1.1rem 0;
 }
 </style>
@@ -240,21 +268,24 @@ def chart_layout(fig: Any, **kwargs) -> Any:
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        margin=dict(l=20, r=20, t=42, b=20),
+        margin=dict(l=24, r=24, t=46, b=24),
         xaxis={
             **dict(
                 gridcolor="rgba(128, 128, 128, 0.18)",
-                zerolinecolor="rgba(128, 128, 128, 0.25)"
+                zerolinecolor="rgba(128, 128, 128, 0.26)",
             ),
             **xaxis_extra
         },
         yaxis={
             **dict(
                 gridcolor="rgba(128, 128, 128, 0.18)",
-                zerolinecolor="rgba(128, 128, 128, 0.25)"
+                zerolinecolor="rgba(128, 128, 128, 0.26)",
             ),
             **yaxis_extra
         },
+        hoverlabel=dict(
+            font_size=12,
+        ),
         **kwargs,
     )
     return fig
