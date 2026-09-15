@@ -1,8 +1,26 @@
 # FoodOps.AI
 
-A food-delivery data platform built around four independent data-science modules: demand forecasting, delivery time (ETA) prediction, restaurant/menu recommendation, and A/B test analysis. Each module solves one self-contained problem using public or simulated data, with its own dataset, models, and evaluation.
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
+[![DemandOps Deployed](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://foodops-ai-demandops.streamlit.app/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Status](https://img.shields.io/badge/DemandOps-Complete%20%26%20Deployed-emerald.svg)](https://foodops-ai-demandops.streamlit.app/)
 
-This document describes what the project is, what problem each module solves, and how the repository is organized. Implementation details (exact dataset, features, models, metrics, results) for each module live in that module's own `README.md`, filled in as the module is built.
+**FoodOps.AI** is an enterprise-grade food delivery machine learning platform built around four independent, self-contained operational intelligence modules: **demand forecasting**, **delivery time (ETA) prediction**, **personalized menu recommendation**, and **experimentation / causal inference**.
+
+Each module solves a high-impact operational decision problem using real-world or realistically simulated data, progressing from exploratory data analysis and simple baselines to production-grade ML architectures and interactive operations consoles.
+
+> 🚀 **DemandOps Live Cloud Application:** [https://foodops-ai-demandops.streamlit.app/](https://foodops-ai-demandops.streamlit.app/)
+
+---
+
+## Module Status Overview
+
+| Module | Operational Domain | Primary Modeling Paradigm | Benchmark KPI | Status | Live Console / Documentation |
+| :--- | :--- | :--- | :---: | :---: | :--- |
+| **Module 1: DemandOps** | Weekly Fulfillment Demand Forecasting | LightGBM GBDT, PyTorch LSTM, Ridge | **28.75% WAPE** | 🟢 **Complete & Deployed** | [Live App](https://foodops-ai-demandops.streamlit.app/) · [DemandOps README](./DemandOps/README.md) |
+| **Module 2: DeliveryOps** | Real-Time Order Delivery ETA Prediction | Gradient Boosted Trees & Uncertainty Intervals | MAE / P90 Error | 🟡 Queued (Next) | [DeliveryOps README](./DeliveryOps/README.md) |
+| **Module 3: PersonalizeOps** | Implicit Feedback Dish & Restaurant Ranking | Matrix Factorization & Two-Tower Embeddings | NDCG@10 / Recall@10 | ⚪ Queued | [PersonalizeOps README](./PersonalizeOps/README.md) |
+| **Module 4: Experimentation** | A/B Test Harness & Causal Inference | Frequentist/Bayesian Testing, DiD, Matching | SRM / Uplift / Power | ⚪ Queued | [Experimentation README](./Experimentation/README.md) |
 
 ---
 
@@ -18,192 +36,232 @@ This document describes what the project is, what problem each module solves, an
 - [Build Order](#build-order)
 - [Planned Integration Layer](#planned-integration-layer)
 - [Tech Stack](#tech-stack)
-- [Status](#status)
+- [Quickstart & Local Execution](#quickstart--local-execution)
 
 ---
 
 ## What This Repository Is
 
-A food-delivery platform (riders, restaurants, orders, zones) generates several distinct types of decisions that data can inform: how much demand to expect, how long a delivery will take, what to recommend to a given user, and whether a given change actually improved something. These four decision types don't share a common model or method — they're different problem families (time series, regression, recommendation, causal inference) — so this repo treats them as four separate modules rather than forcing one unified approach.
+A food-delivery platform (riders, restaurants, orders, zones) generates distinct operational decisions that data science can inform:
+1. **How much food demand to expect** at each fulfillment center to prevent spoilage and kitchen stockouts (*Time Series Forecasting*).
+2. **How long a delivery will take** to set realistic customer expectations and dispatch couriers efficiently (*Tabular Regression & Uncertainty Estimation*).
+3. **What dishes and restaurants to recommend** to optimize customer conversion (*Implicit Recommendation & Deep Ranking*).
+4. **Whether a commercial or product change actually worked** without being misled by confounders or sample ratio mismatch (*Causal Inference & A/B Testing*).
+
+Because these four decision types belong to fundamentally different problem families, FoodOps.AI structures them as independent modules rather than forcing an artificial unified abstraction.
 
 Each module:
-- States a concrete problem (input → output, and what "good" means for that output)
-- Uses a public dataset or a simulated dataset built to resemble the real data shape
-- Is built up from a simple baseline to a more complete solution, with the reasoning behind each step documented
-- Exposes its results through an interactive Streamlit operations application so models, what-if scenarios, and benchmarks can be explored directly, not just read as static notebooks
+- Formulates a concrete operational problem with domain-specific KPIs.
+- Uses public benchmark datasets or rigorous simulations reflecting real operational scale.
+- Builds an incremental modeling progression (Heuristic $\to$ Linear $\to$ Deep Learning $\to$ Gradient Boosted Trees).
+- Deploys an interactive Streamlit operations application allowing non-technical stakeholders to simulate scenarios and audit benchmarks.
 
 ---
 
 ## Module 1: DemandOps (Demand Forecasting)
 
-**Folder:** [`DemandOps/`](./DemandOps/README.md)
+**Status:** 🟢 **Complete & Live Deployed**  
+**Detailed Documentation:** [`DemandOps/README.md`](./DemandOps/README.md)  
+**Interactive Live Console:** [https://foodops-ai-demandops.streamlit.app/](https://foodops-ai-demandops.streamlit.app/)
 
-**Problem:** Given historical order counts for a location and item category, predict order volume for a future period (e.g., the next several weeks). Underestimating demand leads to understaffing and slow deliveries; overestimating leads to wasted rider/inventory cost — so both the forecast and its likely error matter.
+### Operational Problem
+Decentralized fulfillment centers face a severe tradeoff: over-predicting weekly dish demand leads to perishable food waste and cold-chain storage overload; under-predicting causes kitchen stockouts, canceled orders, and delayed deliveries. DemandOps forecasts weekly order volume (`num_orders`) for each `(center_id, meal_id)` combination across a decentralized fulfillment center network (77 hubs, 51 dishes, 14 categories, 4 cuisines, 119.5M historical meals).
 
-**What's involved:**
-- Time-series feature engineering: lag features, rolling averages, calendar effects, price/promotion effects
-- A time-based (not random) train/validation/test split — random splitting leaks future information into training for time series and produces misleadingly good validation scores
-- A classical baseline (naive lag-1 forecast, regularized Ridge regression) to establish what "no real model" and linear baselines achieve
-- A tree-based model (LightGBM) using engineered features, capturing non-linear pricing elasticity and promotional uplifts
-- A PyTorch LSTM as a deep sequential comparison, evaluated honestly against the tree-based model
-- Evaluation using volume-weighted metrics (WAPE) rather than raw RMSE or unweighted MAPE
-- An autoregressive multi-step roll-forward forecasting engine for out-of-sample horizons (`test.csv`)
-- An interactive Streamlit dashboard featuring live meal-center demand forecasting, price elasticity simulation, promotional channel lift, and model benchmarks
+### Technical Highlights
+- **Leakage-Free Temporal Validation:** Trained strictly on historical weeks 1 to 131 and evaluated on unseen hold-out weeks 132 to 145 (14 continuous weeks) to prevent lookahead bias.
+- **Supply Chain Feature Engineering:** Autoregressive lags (`lag_1`, `lag_2`, `lag_4`), 4-week rolling statistics (`rolling_mean_4`, `rolling_std_4`), non-linear discount elasticity (`price_change_pct`), promotional indicators (`emailer_for_promotion`, `homepage_featured`), calendar seasonality (`week_of_year`), and center/meal categorical metadata.
+- **Target Transformation:** Trained on $\log(1 + \mathrm{num\_orders})$ for variance stabilization, with inverted non-negative predictions $\max(0, \exp(\hat{y}) - 1)$.
+- **Autoregressive Multi-Step Roll-Forward Engine:** Iterative state-lookup engine predicting 32,573 rows for out-of-sample forward horizon weeks 146–155 ([`submission_lgb.csv`](./DemandOps/data/processed/submission_lgb.csv)) with 0 missing or negative values.
 
-**Details (dataset, exact features, results, how it's exposed):** in the [DemandOps README](./DemandOps/README.md).
+### Model Benchmark Scoreboard
+
+| Rank | Model Architecture | Model Family | Validation WAPE (%) | Validation MAPE (%) | Operational Role |
+| :---: | :--- | :--- | :---: | :---: | :--- |
+| 🥇 | **LightGBM Regressor** | Gradient Boosted Decision Trees | **28.75%** | **44.14%** | **Champion (Production Deployed)** |
+| 🥈 | **Simple LSTM** | Deep Learning (PyTorch) | **29.98%** | **44.02%** | Challenger Model |
+| 🥉 | **Ridge Regression** | L2-Regularized Linear Model | **35.72%** | **46.98%** | Linear Baseline |
+| 4 | **Naive Lag-1 Baseline** | Heuristic Benchmark | **41.96%** | **67.23%** | Lower Bound Benchmark |
+
+*Primary KPI: Volume-Weighted Absolute Percentage Error (WAPE) — weights prediction errors by order volume so high-demand kitchen staples are prioritized over low-volume outliers.*
+
+### Streamlit Operations Console Features
+- **Live Demand Prediction & Buffer Calculator:** Real-time inference across 77 fulfillment centers and 51 catalog meals with automated +15% kitchen safety prep stock and 80% confidence interval.
+- **Price Elasticity & Revenue Sensitivity Curve:** Interactive price sweep from $-30\%$ to $+30\%$ identifying the exact revenue-maximizing checkout price.
+- **Promotional Channel Lift Simulator:** Quantifies individual and combined demand uplifts for Email campaigns vs. Homepage app carousels.
+- **Model Scoreboard & Feature Importance:** Live error metrics comparison and top 12 predictive features (splits & gain).
+- **Portfolio & Kitchen Analytics:** Historical meal category distributions, cuisine demand shares, and multi-year weekly network volume trajectories.
 
 ---
 
 ## Module 2: DeliveryOps (ETA Prediction)
 
+**Status:** 🟡 Queued (Next Module)  
 **Folder:** [`DeliveryOps/`](./DeliveryOps/README.md)
 
-**Problem:** Given order-level information available at the time an order is placed (distance, time of day, traffic/weather conditions, restaurant load), predict how long the delivery will take. This estimate is shown to the customer directly, so both average accuracy and where the model tends to be wrong (e.g., specific weather conditions or times of day) matter.
+### Operational Problem
+Predict total order delivery duration (order placed $\to$ customer doorstep) given distance, time of day, weather, traffic congestion, and kitchen preparation load. 
 
-**What's involved:**
-- Feature engineering from raw signals (e.g., computing distance from coordinates, encoding time of day, joining weather/traffic data if available)
-- A regression model progression from a simple baseline to a tuned gradient-boosted model
-- Error analysis by segment — checking whether errors are randomly distributed or systematically worse under specific conditions
-- Calibrated prediction intervals rather than only a single point estimate, providing operational confidence bounds
-
-**Details (dataset, features, results, exposure):** in the [DeliveryOps README](./DeliveryOps/README.md) once built.
+### What's Involved:
+- Spatial feature engineering (haversine/OSRM routing distances, zone clustering).
+- Gradient boosted regression models with calibrated prediction intervals (P10, P50, P90) to provide customer-facing delivery promises.
+- Error decomposition by delivery segment (rush hour vs. off-peak, extreme weather vs. clear).
+- Interactive dispatch and ETA simulator in Streamlit.
 
 ---
 
 ## Module 3: PersonalizeOps (Recommendation Engine)
 
+**Status:** ⚪ Queued  
 **Folder:** [`PersonalizeOps/`](./PersonalizeOps/README.md)
 
-**Problem:** Given a history of user interactions with restaurants/items (orders, clicks, or ratings), rank restaurants/items for a given user. Interaction data here is implicit (an order signals interest but there's no explicit rating scale in most of it) and sparse (most users have not interacted with most restaurants), which shapes the whole approach.
+### Operational Problem
+Rank dishes and restaurants for users based on sparse, implicit interaction histories (orders, re-orders, impressions).
 
-**What's involved:**
-- Building an interaction matrix from implicit feedback
-- A classical collaborative-filtering / matrix-factorization approach, implemented directly to understand the mechanics
-- A two-tower embedding model in PyTorch as a deep-learning approach, compared against the classical method
-- Ranking-appropriate evaluation metrics (precision@k, recall@k, NDCG) rather than classification accuracy
-- Handling cold-start scenarios for new users and newly onboarded restaurants
-
-**Details (dataset, interaction data construction, results, exposure):** in the [PersonalizeOps README](./PersonalizeOps/README.md) once built.
+### What's Involved:
+- Implicit interaction matrix construction and popularity baselines.
+- Classical collaborative filtering (Matrix Factorization / Implicit ALS).
+- Deep two-tower neural network in PyTorch (User Tower + Dish/Restaurant Tower).
+- Ranking evaluation: NDCG@k, Precision@k, Recall@k, and coverage.
+- Cold-start handling for new consumers and newly onboarded kitchens.
 
 ---
 
 ## Module 4: Experimentation (Experimentation Framework)
 
+**Status:** ⚪ Queued  
 **Folder:** [`Experimentation/`](./Experimentation/README.md)
 
-**Problem:** Given two variants of something (e.g., a promo strategy, a UI change, a pricing change) and outcome data from users exposed to each, determine whether the observed difference reflects a real effect or noise, and by how much. Most product decisions are made this way rather than by assumption, so getting the statistical analysis right — not just running a test but understanding what can invalidate it — is the actual skill involved.
+### Operational Problem
+Evaluate whether product interventions (pricing changes, algorithm updates, delivery fee adjustments) drive statistically significant and causal business improvements.
 
-**What's involved:**
-- Defining a hypothesis, primary metric, and required sample size before generating or looking at outcome data
-- Correctly applying statistical tests, checking assumptions rather than applying tests blindly
-- Demonstrating and diagnosing common experiment pitfalls: peeking at results early, novelty effects, sample ratio mismatch (SRM), multiple comparisons
-- Observational causal inference methods for scenarios where randomized A/B splits cannot be executed
-
-**Details (scenario simulated, tools used, methodology, results, exposure):** in the [Experimentation README](./Experimentation/README.md) once built.
+### What's Involved:
+- Minimum detectable effect (MDE) and sample size calculations.
+- Rigorous hypothesis testing with guardrails against common experimentation pitfalls (peeking, Sample Ratio Mismatch, multiple comparisons).
+- Observational causal inference (Difference-in-Differences, Propensity Score Matching) for network-wide policy changes where randomized A/B splits cannot be isolated.
+- Interactive experiment diagnostics dashboard in Streamlit.
 
 ---
 
 ## Repository Structure
 
-Single repository, one folder per module, each module self-contained:
-
 ```
 FoodOps.AI/
-├── README.md                          ← this file
-├── requirements.txt                   ← pinned project dependencies
+├── README.md                          ← Main platform overview (this file)
+├── requirements.txt                   ← Pinned project dependencies
 ├── LICENSE                            ← MIT license
 │
-├── DemandOps/                         ← Module 1: Demand Forecasting
-│   ├── README.md                      ← module architecture, results & user guide
+├── DemandOps/                         ← Module 1: Demand Forecasting (Complete & Live)
+│   ├── README.md                      ← Comprehensive module documentation & results
 │   ├── app/
-│   │   └── streamlit_app.py           ← interactive Streamlit operations dashboard
+│   │   ├── streamlit_app.py           ← Interactive Streamlit operations console
+│   │   └── theme.py                   ← Theme tokens & responsive Plotly configurations
 │   ├── data/
-│   │   ├── raw/                       ← fulfillment center, meal, train & test data
-│   │   └── processed/                 ← engineered panels, state caches & submission
-│   ├── models/                        ← lgb_model_bundle.joblib
-│   ├── notebooks/                     ← EDA, feature_engineering, model_training, test_evaluation
-│   └── src/                           ← inference.py, data_loader.py
+│   │   ├── raw/                       ← Fulfillment center, meal, train & test CSVs
+│   │   └── processed/                 ← Engineered panels, state caches & submission
+│   ├── models/
+│   │   ├── lgb_model.joblib           ← Serialized LightGBM regressor
+│   │   └── lgb_model_bundle.joblib    ← Production bundle (model, feature contract, metadata)
+│   ├── notebooks/
+│   │   ├── EDA.ipynb                  ← Exploratory data analysis
+│   │   ├── feature_engineering.ipynb  ← Panel generation & temporal feature engineering
+│   │   ├── model_training.ipynb       ← 4-model benchmarking (Naive, Ridge, LightGBM, LSTM)
+│   │   └── test_evaluation.ipynb      ← Autoregressive multi-step roll-forward evaluation
+│   └── src/
+│       ├── data_loader.py             ← Cached loaders for metadata & summaries
+│       └── inference.py               ← Single-row inference, elasticity & promo simulations
 │
-├── DeliveryOps/                       ← Module 2: ETA Prediction
+├── DeliveryOps/                       ← Module 2: ETA Prediction (Queued)
 │   ├── README.md
-│   ├── app/                           ← interactive ETA prediction dashboard
+│   ├── app/
 │   ├── data/{raw,processed}/
 │   ├── models/
 │   ├── notebooks/
 │   └── src/
 │
-├── PersonalizeOps/                    ← Module 3: Recommendation Engine
+├── PersonalizeOps/                    ← Module 3: Recommendation Engine (Queued)
 │   ├── README.md
-│   ├── app/                           ← interactive ranking & discovery dashboard
+│   ├── app/
 │   ├── data/{raw,processed}/
 │   ├── models/
 │   ├── notebooks/
 │   └── src/
 │
-├── Experimentation/                   ← Module 4: Experimentation Framework
-│   ├── README.md
-│   ├── app/                           ← experiment diagnostics & reporting dashboard
-│   ├── data/{raw,processed}/
-│   ├── notebooks/
-│   └── src/
-│
-└── .gitignore
+└── Experimentation/                   ← Module 4: Experimentation Framework (Queued)
+    ├── README.md
+    ├── app/
+    ├── data/{raw,processed}/
+    ├── notebooks/
+    └── src/
 ```
-
-Each module exposes its results through an interactive **Streamlit** dashboard that embeds real-time inference, scenario testing, and diagnostic metrics directly with no external serving dependencies.
 
 ---
 
 ## Why Modules Are Independent
 
-Each module has its own `data/`, `src/`, `app/`, and `notebooks/`, with no shared top-level `common/` code at this stage. This keeps each module understandable and runnable on its own — reading `DeliveryOps` doesn't require first understanding an abstraction used across all four — and avoids designing an artificial shared layer before it's clear the modules actually need one.
+Each module maintains its own dedicated `data/`, `models/`, `notebooks/`, `src/`, and `app/` subdirectories. This architecture ensures:
+- **Zero Coupling:** Each operational domain can be explored, run, trained, and audited in complete isolation.
+- **No Premature Abstraction:** Machine learning problems in time series, spatial regression, collaborative filtering, and causal inference require distinct schemas, preprocessing pipelines, and evaluation harnesses.
+- **Plug-and-Play Production:** Every module’s Streamlit console functions as an independent micro-frontend that can be deployed standalone or embedded into an enterprise operations portal.
 
 ---
 
 ## Build Order
 
-Development proceeds in four sequential stages, matching the operational hierarchy of a food delivery platform:
+Development proceeds across four sequential operational stages:
 
-1. **DemandOps (Demand Forecasting)** — *Completed*: Foundational operational forecasting. Ingested historical fulfillment center and meal order streams, engineered time-series lag/rolling features, benchmarked 4 models (Naive, Ridge, LSTM, LightGBM), generated out-of-sample multi-step forecasts for `test.csv`, and deployed an interactive Streamlit operations dashboard.
-2. **DeliveryOps (ETA Prediction)** — Predict customer delivery duration based on order timestamp, route distance, weather, and fulfillment/restaurant load with calibrated uncertainty intervals.
-3. **PersonalizeOps (Recommendation Engine)** — Rank dishes and restaurants for users based on sparse, implicit interaction histories using matrix factorization and deep two-tower embedding architectures.
-4. **Experimentation (A/B Testing & Causal Inference)** — Establish the statistical experimentation harness to evaluate changes (e.g., recommendation algorithms, delivery fee adjustments, dispatch rules) with guardrail checks (sample ratio mismatch, novelty effects, and observational causal inference).
+1. **DemandOps (Demand Forecasting)** — **Complete & Live Deployed**: Core supply chain foundation. Ingested 145 weeks of fulfillment transactions, engineered temporal lags, benchmarked 4 models (28.75% WAPE), executed autoregressive roll-forward test inference, and deployed the interactive Streamlit dashboard.
+2. **DeliveryOps (ETA Prediction)** — Predict customer delivery duration based on route distance, weather, and fulfillment load with calibrated uncertainty intervals.
+3. **PersonalizeOps (Recommendation Engine)** — Rank dishes and restaurants for users based on sparse, implicit interaction histories using matrix factorization and deep two-tower architectures.
+4. **Experimentation (A/B Testing & Causal Inference)** — Establish the statistical experimentation harness to evaluate changes (recommendations, pricing, dispatch rules) with guardrail checks against sample ratio mismatch and novelty effects.
 
 ---
 
 ## Planned Integration Layer
 
-While each module is strictly independent during development, an optional integration layer can be introduced after all four modules mature:
+Once all four standalone modules are completed, an optional cross-module integration workflow will connect them:
 
-- **Unified Flow:** A customer browses personalized dish rankings (`PersonalizeOps`), places an order under an active variant in an experiment (`Experimentation`), receives a dynamic delivery ETA (`DeliveryOps`), while batch orders feed downstream fulfillment and staffing models (`DemandOps`).
-- **End-to-End Orchestration:** A central demo application or pipeline connecting module outputs to simulate the operational lifecycle of a live food delivery network.
+```mermaid
+flowchart LR
+    A["Customer Opens App"] --> B["PersonalizeOps\n(Ranks Dishes & Hubs)"]
+    B --> C["Experimentation\n(Assigns Promo / UI Variant)"]
+    C --> D["DeliveryOps\n(Predicts Delivery ETA)"]
+    D --> E["DemandOps\n(Aggregates Demand & Kitchen Buffers)"]
+```
 
 ---
 
 ## Tech Stack
 
-| Category | Tools |
+| Category | Tools & Libraries |
 |---|---|
-| Core language | Python (3.12) |
-| Data wrangling & storage | pandas, numpy, pyarrow |
-| Classical ML & Forecasting | LightGBM, scikit-learn, statsmodels, pmdarima |
-| Deep learning | PyTorch |
-| Dashboards & Interactive UI | Streamlit, Plotly Express & Graph Objects |
-| Experimentation / stats | SciPy, statsmodels, causal inference packages |
-| Version control | Git, single repository |
+| **Core Language** | Python 3.12 |
+| **Data Processing & Storage** | pandas, numpy, pyarrow, joblib |
+| **Classical ML & Gradient Boosting** | LightGBM, scikit-learn |
+| **Deep Learning** | PyTorch (LSTM sequence modeling) |
+| **Interactive Applications** | Streamlit, Plotly Express, Plotly Graph Objects |
+| **Experimentation & Statistics** | SciPy, statsmodels |
+| **Deployment & Hosting** | Streamlit Community Cloud, GitHub |
 
 ---
 
-## Status
+## Quickstart & Local Execution
 
-Current development status by module:
+### 1. Clone & Setup Environment
+```bash
+git clone https://github.com/iamnitishsah/FoodOps.AI.git
+cd FoodOps.AI
 
-- **DemandOps:** **Complete & Operational.** 
-  - Exploratory Data Analysis ([`EDA.ipynb`](./DemandOps/notebooks/EDA.ipynb))
-  - Panel feature engineering ([`feature_engineering.ipynb`](./DemandOps/notebooks/feature_engineering.ipynb))
-  - Multi-model training and benchmarking ([`model_training.ipynb`](./DemandOps/notebooks/model_training.ipynb)): LightGBM achieved **28.75% WAPE**
-  - Autoregressive out-of-sample test forecasting ([`test_evaluation.ipynb`](./DemandOps/notebooks/test_evaluation.ipynb)) producing `submission_lgb.csv`
-  - Interactive operations dashboard ([`streamlit_app.py`](DemandOps/app/streamlit_app.py)) with price elasticity curves, promotional lift, and benchmark scoreboard
-- **DeliveryOps:** Queued (Next module).
-- **PersonalizeOps:** Queued.
-- **Experimentation:** Queued.
+python3 -m venv .venv
+source .venv/bin/activate    # On Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+### 2. Launch DemandOps Operations Console
+```bash
+streamlit run DemandOps/app/streamlit_app.py
+```
+Visit `http://localhost:8501` to interact with the live forecasting dashboard, run what-if price simulations, and view model benchmarks.
+
+### 3. Or Access the Live Cloud Deployment
+The DemandOps dashboard is continuously deployed and accessible at:  
+👉 **[https://foodops-ai-demandops.streamlit.app/](https://foodops-ai-demandops.streamlit.app/)**
