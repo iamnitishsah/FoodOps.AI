@@ -563,19 +563,6 @@ with tab_benchmarks:
     except Exception:
         st.info("Feature importance display unavailable for current model format.")
 
-    with st.expander("📚 Why WAPE is Prioritized Over RMSE & MAPE in Kitchen Supply Chains"):
-        st.markdown(
-            r"""
-**WAPE (Weighted Absolute Percentage Error)**
-
-$$\text{WAPE} = \frac{\sum |y_i - \hat{y}_i|}{\sum y_i} \times 100$$
-
-- **Volume Weighting:** High-demand staples (e.g. Rice Bowls, Beverages) account for the vast majority of raw ingredients and kitchen labor. WAPE weights errors by true order volume, ensuring a 20-order error on a 500-order item is not penalized the same as a 20-order error on a 20-order dish.
-- **Why Not Standard MAPE?** MAPE divides by each individual row's actual order count ($|y - \hat{y}| / y$). When a local hub only serves 1 or 2 portions of a niche starter, a slight deviation blows up the percentage to several hundred percent, distorting operational evaluation.
-- **Why Not RMSE?** Raw RMSE squares errors and is dominated solely by the top 5 largest fulfillment hubs, hiding systematic under-stocking at regional facilities.
-            """
-        )
-
 
 # ==============================================================================
 # TAB 3: PRODUCT & KITCHEN ANALYTICS
