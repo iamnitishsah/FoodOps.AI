@@ -48,9 +48,7 @@ Each module solves a high-impact operational decision problem using real-world o
 - [Repository Structure](#repository-structure)
 - [Why Modules Are Independent](#why-modules-are-independent)
 - [Build Order](#build-order)
-- [Planned Integration Layer](#planned-integration-layer)
 - [Tech Stack](#tech-stack)
-- [Quickstart & Local Execution](#quickstart--local-execution)
 
 ---
 
@@ -99,13 +97,6 @@ Decentralized fulfillment centers face a severe tradeoff: over-predicting weekly
 
 *Primary KPI: Volume-Weighted Absolute Percentage Error (WAPE) — weights prediction errors by order volume so high-demand kitchen staples are prioritized over low-volume outliers.*
 
-### Streamlit Operations Console Features
-- **Live Demand Prediction & Buffer Calculator:** Real-time inference across 77 fulfillment centers and 51 catalog meals with automated +15% kitchen safety prep stock and 80% confidence interval.
-- **Price Elasticity & Revenue Sensitivity Curve:** Interactive price sweep from $-30\%$ to $+30\%$ identifying the exact revenue-maximizing checkout price.
-- **Promotional Channel Lift Simulator:** Quantifies individual and combined demand uplifts for Email campaigns vs. Homepage app carousels.
-- **Model Scoreboard & Feature Importance:** Live error metrics comparison and top 12 predictive features (splits & gain).
-- **Portfolio & Kitchen Analytics:** Historical meal category distributions, cuisine demand shares, and multi-year weekly network volume trajectories.
-
 ---
 
 ## Module 2: DeliveryOps (ETA Prediction)
@@ -117,16 +108,25 @@ Decentralized fulfillment centers face a severe tradeoff: over-predicting weekly
 ### Operational Problem
 Predict total order delivery duration (order placed → customer doorstep) given distance, time of day, weather, traffic congestion, and kitchen preparation load. DeliveryOps emphasizes uncertainty-aware SLAs by predicting P10/P50/P90 quantiles so operations can promise customer-facing windows (e.g., "35–50 minutes") with calibrated coverage.
 
-### What's Involved:
-- Spatial feature engineering (haversine/OSRM routing distances, zone clustering).
-- Gradient boosted quantile regression models (Pinball Loss) producing P10/P50/P90 estimates for optimistic, expected, and promised delivery timelines.
-- Error decomposition by delivery segment (rush hour vs. off-peak, extreme weather vs. clear) and SHAP-based explainability.
-- Interactive dispatch and ETA simulator in Streamlit.
+- **Primary Dataset Source:** [DoorDash ETA Prediction (Kaggle)](https://www.kaggle.com/datasets/dharun4772/doordash-eta-prediction)
 
-### Champion Model & Operational KPIs
-- **Champion:** Tuned LightGBM (P10/P50/P90 quantile models) — Optuna-tuned hyperparameters.
-- **Test MAE:** **10.29 minutes** (val/test benchmark)
-- **P90 Coverage:** **86.70%** — the promised window meets SLA coverage in ~87/100 deliveries.
+### Technical Highlights
+- **Target Transformation & Quantile Loss:** Delivery durations are log-transformed (log(1 + duration)) for variance stabilization; models are trained using Pinball Loss to predict P10/P50/P90 quantiles which are inverted to minutes for SLA windows.
+- **Timezone Alignment & Anomaly Truncation:** UTC timestamps localized (US/Pacific) and extreme anomalies (negative durations, >7200s) truncated to preserve model stability.
+- **Market Strain & Congestion Ratios:** Engineered ratios like `busy_dasher_ratio` and `outstanding_order_ratio` capture dispatch pressure; division-by-zero cases are capped to robustify gradients.
+- **Probabilistic Imputation & Smoothed Target Encoding:** Missing protocol fields imputed probabilistically; high-cardinality restaurant categories use Bayesian-smoothed target encoding (weight=20) to prevent overfitting.
+- **Cyclical Temporal Encodings & Robust Feature Engineering:** `order_hour` and `order_day_of_week` converted to sine/cosine pairs; feature normalization and careful truncation handle edge-case telemetry dropouts.
+- **Explainability:** SHAP is used to audit global and local explanations (e.g., `estimated_store_to_consumer_driving_duration` and `store_category_target_enc` are top drivers).
+
+### Model Benchmark Scoreboard
+
+| Rank | Model Architecture | Family | Test MAE (min) | P90 SLA Coverage | Status | Key Characteristics |
+| :---: | :--- | :--- | :---: | :---: | :---: | :--- |
+| 🥇 | **Tuned LightGBM (P10/50/90)** | Gradient Boosted Trees | **10.29** | **86.70%** | **Champion (Deployed)** | Optuna Bayesian tuned (547 estimators); heavy regularization (`subsample=0.92`, `colsample=0.89`). |
+| 🥈 | **Baseline LightGBM** | Gradient Boosted Trees | 10.31 | 87.49% | Challenger | Default hyperparameters; slightly overfits normal weeks. |
+| 🥉 | **Ridge Regression** | L2-Regularized Linear Model | 10.89 | N/A | Linear Baseline | Pipeline with `StandardScaler` and `OneHotEncoder`. |
+| 4 | **Naive Median Baseline** | Heuristic Benchmark | 13.08 | N/A | Lower Bound | Predicts the global median (44 min). |
+
 
 ---
 
@@ -223,19 +223,6 @@ Development proceeds across four sequential operational stages:
 3. **PersonalizeOps (Recommendation Engine)** — Rank dishes and restaurants for users based on sparse, implicit interaction histories using matrix factorization and deep two-tower architectures.
 4. **Experimentation (A/B Testing & Causal Inference)** — Establish the statistical experimentation harness to evaluate changes (recommendations, pricing, dispatch rules) with guardrail checks against sample ratio mismatch and novelty effects.
 
----
-
-## Planned Integration Layer
-
-Once all four standalone modules are completed, an optional cross-module integration workflow will connect them:
-
-```mermaid
-flowchart LR
-    A["Customer Opens App"] --> B["PersonalizeOps\n(Ranks Dishes & Hubs)"]
-    B --> C["Experimentation\n(Assigns Promo / UI Variant)"]
-    C --> D["DeliveryOps\n(Predicts Delivery ETA)"]
-    D --> E["DemandOps\n(Aggregates Demand & Kitchen Buffers)"]
-```
 
 ---
 
@@ -252,25 +239,3 @@ flowchart LR
 | **Deployment & Hosting** | Streamlit Community Cloud, GitHub |
 
 ---
-
-## Quickstart & Local Execution
-
-### 1. Clone & Setup Environment
-```bash
-git clone https://github.com/iamnitishsah/FoodOps.AI.git
-cd FoodOps.AI
-
-python3 -m venv .venv
-source .venv/bin/activate    # On Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-### 2. Launch DemandOps Operations Console
-```bash
-streamlit run DemandOps/app/streamlit_app.py
-```
-Visit `http://localhost:8501` to interact with the live forecasting dashboard, run what-if price simulations, and view model benchmarks.
-
-### 3. Or Access the Live Cloud Deployment
-The DemandOps dashboard is continuously deployed and accessible at:  
-👉 **[https://foodops-ai-demandops.streamlit.app/](https://foodops-ai-demandops.streamlit.app/)**
