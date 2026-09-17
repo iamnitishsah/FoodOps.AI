@@ -61,6 +61,39 @@ except Exception as e:
 if not model_loaded:
     st.stop()
 
+# Render the top masthead/header now that core resources are loaded
+try:
+    # Build a friendly week_label from the operational summary if available
+    markets = summary_data.get("by_market", []) if isinstance(summary_data, dict) else []
+    n_markets = len(markets)
+    total_orders = 0
+    if markets:
+        try:
+            total_orders = sum([int(m.get("total_orders", 0)) for m in markets])
+        except Exception:
+            total_orders = 0
+    week_label = f"Historical panel · {n_markets} Markets · ~{total_orders:,} Orders" if n_markets else "Historical panel"
+
+    # Build model label from benchmark metrics (best-ranked model) when available
+    model_label = "LightGBM Quantile Regressor (10.29m MAE)"
+    try:
+        if not benchmarks_df.empty:
+            top = benchmarks_df.iloc[0]
+            arch = top.get("Model Architecture", "Model")
+            mae = top.get("Test MAE (min)")
+            if mae is not None:
+                model_label = f"{arch} ({mae:.2f}m MAE)"
+            else:
+                model_label = f"{arch}"
+    except Exception:
+        # Fall back to the theme default if any of the above fails
+        model_label = model_label
+
+    masthead(week_label=week_label, model_label=model_label)
+except Exception:
+    # If masthead injection fails, continue gracefully — the rest of the app should still work
+    pass
+
 # Primary Navigation Tabs
 tab_pred, tab_benchmarks, tab_analytics = st.tabs([
     "ETA Dispatch Simulator",

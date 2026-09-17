@@ -65,7 +65,7 @@ except ImportError:
 # ------------------------------------------------------------------------------
 st.set_page_config(
     page_title="FoodOps.AI — DemandOps",
-    page_icon="🍲",
+    page_icon="📊",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -100,6 +100,45 @@ except Exception as e:
 
 if not model_loaded:
     st.stop()
+
+# Render the top masthead/header now that core resources are loaded
+try:
+    # Construct a concise week_label using available summary and dataset sizes
+    n_hubs = len(centers_df) if 'centers_df' in globals() and centers_df is not None else 0
+    n_dishes = len(meals_df) if 'meals_df' in globals() and meals_df is not None else 0
+    total_orders = 0
+    try:
+        weekly = summary_data.get("weekly_platform_demand", []) if isinstance(summary_data, dict) else []
+        if weekly:
+            total_orders = sum([int(w.get("num_orders", 0)) for w in weekly])
+    except Exception:
+        total_orders = 0
+
+    if n_hubs or n_dishes:
+        week_label = f"Historical panel · Weeks 1–145 · {n_hubs} Hubs · {n_dishes} Dishes"
+    elif total_orders:
+        week_label = f"Historical panel · ~{total_orders:,} Orders"
+    else:
+        week_label = "Historical panel"
+
+    # Build model label from benchmarks (prefer architecture + WAPE when available)
+    model_label = "LightGBM Champion (28.75% WAPE)"
+    try:
+        if 'benchmarks_df' in globals() and not benchmarks_df.empty:
+            top = benchmarks_df.iloc[0]
+            arch = top.get("Model Architecture", "Model")
+            wape = top.get("Validation WAPE (%)") or top.get("Validation WAPE") or None
+            if wape is not None:
+                model_label = f"{arch} ({wape:.2f}% WAPE)"
+            else:
+                model_label = f"{arch}"
+    except Exception:
+        model_label = model_label
+
+    masthead(week_label=week_label, model_label=model_label)
+except Exception:
+    # Don't let a header rendering issue break the app
+    pass
 
 # Primary Navigation Tabs
 tab_pred, tab_benchmarks, tab_analytics = st.tabs([
