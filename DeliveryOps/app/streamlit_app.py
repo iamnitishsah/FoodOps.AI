@@ -58,12 +58,6 @@ except Exception as e:
     st.error(f"Initialization Error: Unable to load DeliveryOps artifacts. Error: {e}")
     model_loaded = False
 
-# Render Executive Masthead
-masthead(
-    week_label="Historical panel: Jan - Feb 2015 · 6 Markets · ~196k Orders",
-    model_label="LightGBM Quantile Regressor (10.29m MAE)",
-)
-
 if not model_loaded:
     st.stop()
 

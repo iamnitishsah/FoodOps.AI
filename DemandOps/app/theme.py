@@ -211,12 +211,12 @@ def apply_theme() -> None:
     st.markdown(CSS, unsafe_allow_html=True)
 
 
-def masthead(week_label: str = "", model_label: str = "LightGBM Champion (28.75% WAPE)") -> None:
+def masthead(week_label: str = "Historical panel: Weeks 1–145 · 77 Hubs · 51 Catalog Dishes", model_label: str = "LightGBM Champion (28.75% WAPE)") -> None:
     """Render executive top navigation masthead."""
     html = textwrap.dedent(f"""\
 <div class="fo-masthead">
     <div class="fo-brand-group">
-        <div class="fo-wordmark"><span class="fo-dot"></span>FoodOps.AI</div>
+        <div class="fo-wordmark"><span class="fo-dot"></span>FoodOps.AI [DemandOps]</div>
         <div class="fo-tagline">Decentralized Fulfillment Demand Intelligence &amp; Scenario Simulator</div>
     </div>
     <div class="fo-masthead-meta">

@@ -1,17 +1,17 @@
 # DemandOps — Decentralized Fulfillment Demand Forecasting
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://foodops-ai-demandops.streamlit.app/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://foodops-demand.streamlit.app/)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
 [![LightGBM](https://img.shields.io/badge/model-LightGBM%20GBDT-brightgreen.svg)](https://lightgbm.readthedocs.io/)
 [![PyTorch](https://img.shields.io/badge/deep%20learning-PyTorch%20LSTM-orange.svg)](https://pytorch.org/)
 [![Validation WAPE](https://img.shields.io/badge/validation%20WAPE-28.75%25-success.svg)](#2-model-architecture--benchmark-scoreboard)
-[![Status](https://img.shields.io/badge/deployment-complete%20%26%20live-emerald.svg)](https://foodops-ai-demandops.streamlit.app/)
+[![Status](https://img.shields.io/badge/deployment-complete%20%26%20live-emerald.svg)](https://foodops-demand.streamlit.app/)
 
 **DemandOps** is the predictive demand intelligence module of **FoodOps.AI**. It provides granular, multi-step weekly order forecasts across a decentralized fulfillment center network (77 fulfillment hubs, 51 menu dishes, 14 categories, and 4 cuisines).
 
 Designed for cloud kitchen managers, supply chain planners, and operations executives, DemandOps eliminates food spoilage from over-preparation while preventing kitchen stockouts and fulfillment bottlenecks.
 
-> 🚀 **Live Production Application:** [https://foodops-ai-demandops.streamlit.app/](https://foodops-ai-demandops.streamlit.app/)
+> 🚀 **Live Production Application:** [https://foodops-demand.streamlit.app/](https://foodops-demand.streamlit.app/)
 
 ---
 
@@ -174,29 +174,8 @@ flowchart TD
 
 The interactive operations console is implemented in [`app/streamlit_app.py`](./app/streamlit_app.py) and designed according to high-contrast, theme-adaptive enterprise standards.
 
-> 🌐 **Live Cloud Deployment:** [https://foodops-ai-demandops.streamlit.app/](https://foodops-ai-demandops.streamlit.app/)
+> 🌐 **Live Cloud Deployment:** [https://foodops-demand.streamlit.app/](https://foodops-demand.streamlit.app/)
 
-```
-========================================================================================
-                          FoodOps.AI — DemandOps Application
-========================================================================================
- [Tab 1: Forecast & What-If]   [Tab 2: Model Benchmarks]   [Tab 3: Kitchen Analytics]
-----------------------------------------------------------------------------------------
- 01 Hub & Dish Selection        04 Forecast & Inventory Buffer
-  - Fulfillment Hub: Hub 55       - FORECASTED ORDERS: 1,428 (+12.4% vs prior)
-  - Catalog Dish: Meal 1885       - KITCHEN PREP BUFFER: 1,643 (+15% safety stock)
-                                  - EST. GROSS REVENUE: $185,640 ($130.00 / unit)
- 02 Pricing Strategy              - 80% Expected Demand Range: 1,214 to 1,642 orders
-  - Base List Price: $140.00
-  - Checkout Price: $130.00     05 Price Elasticity & Revenue Sensitivity
-  - Active Discount: -7.1%        - Interactive price sweep (-30% to +30%)
-                                  - Current Price vs. Revenue Optimal Price point
- 03 Promotions & Timing
-  - [x] Email Campaign          06 Promotional Channel Lift
-  - [x] Homepage Featured         - Baseline vs Email vs Homepage vs Combined lift
-  - Target Week of Year: W25
-========================================================================================
-```
 
 ### Application Features:
 1. **Interactive Single-Dish Forecast Engine:**
@@ -291,39 +270,6 @@ streamlit run DemandOps/app/streamlit_app.py
 ```
 The application will automatically initialize and open in your default browser at `http://localhost:8501`.
 
-### Step 4: Run Inference Programmatically
-```python
-from DemandOps.src.inference import load_model_bundle, predict_single
-
-# Load production bundle
-bundle = load_model_bundle()
-
-# Example input for Hub 55, Meal 1885
-sample_payload = {
-    "checkout_price": 130.0,
-    "base_price": 140.0,
-    "price_change_pct": -0.0714,
-    "lag_1": 6.85,
-    "lag_2": 6.72,
-    "lag_4": 6.91,
-    "rolling_mean_4": 6.83,
-    "rolling_std_4": 0.15,
-    "op_area": 3.7,
-    "week_of_year": 25,
-    "emailer_for_promotion": 1,
-    "homepage_featured": 1,
-    "category": "Beverages",
-    "cuisine": "Italian",
-    "center_type": "TYPE_C",
-    "center_id": 55,
-    "meal_id": 1885,
-}
-
-result = predict_single(bundle, sample_payload)
-print(f"Predicted Orders: {result['predicted_orders']}")
-print(f"Kitchen Prep Stock (+15% Buffer): {result['safety_stock_prep']}")
-print(f"80% Expected Demand Range: {result['lower_bound_80']} - {result['upper_bound_80']}")
-```
 
 ---
 

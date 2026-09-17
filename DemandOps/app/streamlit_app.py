@@ -98,12 +98,6 @@ except Exception as e:
     st.error(f"Initialization Error: Unable to load model or dataset artifacts ({e})")
     model_loaded = False
 
-# Render Executive Masthead
-masthead(
-    week_label="Historical panel: Weeks 1–145 · 77 Hubs · 51 Catalog Dishes",
-    model_label="LightGBM Champion (28.75% WAPE)",
-)
-
 if not model_loaded:
     st.stop()
 
