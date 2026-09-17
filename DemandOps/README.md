@@ -23,11 +23,10 @@ Designed for cloud kitchen managers, supply chain planners, and operations execu
 4. [Feature Engineering Pipeline](#4-feature-engineering-pipeline)
 5. [Model Architecture & Benchmark Scoreboard](#5-model-architecture--benchmark-scoreboard)
 6. [Why WAPE Over RMSE & MAPE in Food Supply Chains](#6-why-wape-over-rmse--mape-in-food-supply-chains)
-7. [Autoregressive Multi-Step Roll-Forward Engine](#7-autoregressive-multi-step-roll-forward-engine)
-8. [Interactive Streamlit Operations Dashboard](#8-interactive-streamlit-operations-dashboard)
-9. [Repository & Module Directory Layout](#9-repository--module-directory-layout)
-10. [Local Quickstart & Execution Guide](#10-local-quickstart--execution-guide)
-11. [Supply Chain Insights & Business Takeaways](#11-supply-chain-insights--business-takeaways)
+7. [Interactive Streamlit Operations Dashboard](#7-interactive-streamlit-operations-dashboard)
+8. [Repository & Module Directory Layout](#8-repository--module-directory-layout)
+9. [Local Quickstart & Execution Guide](#9-local-quickstart--execution-guide)
+10. [Supply Chain Insights & Business Takeaways](#10-supply-chain-insights--business-takeaways)
 
 ---
 
@@ -144,32 +143,7 @@ $$\text{WAPE} = \frac{\sum_{i=1}^N |y_i - \hat{y}_i|}{\sum_{i=1}^N y_i} \times 1
 
 ---
 
-## 7. Autoregressive Multi-Step Roll-Forward Engine
-
-The raw forward test dataset ([`data/raw/test.csv`](./data/raw/test.csv)) spans **weeks 146 through 155 (10 weeks forward)**. Because future actual orders are unavailable, future lags (`lag_1`, `lag_2`, `lag_4`) and rolling statistics (`rolling_mean_4`, `rolling_std_4`) are unknown for weeks 147 onward.
-
-
-```mermaid
-flowchart TD
-    A["Historical Data (Weeks 1 to 145)"] --> B["Initialize Dynamic State Dictionary\n(latest known demand per hub-dish pair)"]
-    B --> C["Loop Week w ∈ [146, 155]"]
-    C --> D["Compute Dynamic Lags\n(lag_1, lag_2, lag_4, rolling_mean_4, rolling_std_4)"]
-    D --> E["Feed Feature Vector into Champion LightGBM"]
-    E --> F["Predict Log Orders: y_log_pred"]
-    F --> G["Invert & Clip: max(0, exp(y_log_pred) - 1)"]
-    G --> H["Update Dynamic State Cache for Week w\n(becomes lag_1 for Week w+1)"]
-    H --> C
-    G --> I["Export 32,573 Rows to submission_lgb.csv"]
-```
-
-### Roll-Forward Audit Results:
-- **Total Test Records Predicted:** 32,573 rows.
-- **Data Integrity:** 0 null values, 0 missing rows, 0 negative values.
-- **Artifact Exported:** [`data/processed/submission_lgb.csv`](./data/processed/submission_lgb.csv) ready for downstream enterprise resource planning (ERP) systems.
-
----
-
-## 8. Interactive Streamlit Operations Dashboard
+## 7. Interactive Streamlit Operations Dashboard
 
 The interactive operations console is implemented in [`app/streamlit_app.py`](./app/streamlit_app.py) and designed according to high-contrast, theme-adaptive enterprise standards.
 
@@ -191,7 +165,7 @@ The interactive operations console is implemented in [`app/streamlit_app.py`](./
 
 ---
 
-## 9. Repository & Module Directory Layout
+## 8. Repository & Module Directory Layout
 
 ```
 DemandOps/
@@ -226,7 +200,7 @@ DemandOps/
 
 ---
 
-## 10. Local Quickstart & Execution Guide
+## 9. Local Quickstart & Execution Guide
 
 ### Prerequisites
 - Python 3.10+ (tested on Python 3.12)
@@ -258,7 +232,7 @@ The application will automatically initialize and open in your default browser a
 
 ---
 
-## 11. Supply Chain Insights & Business Takeaways
+## 10. Supply Chain Insights & Business Takeaways
 
 1. **Promotional Multiplier Interaction:** Outbound email marketing (`emailer_for_promotion`) and in-app display placement (`homepage_featured`) demonstrate strong super-additive effects. Across key categories, combining both channels yields a 45%–70% demand surge, requiring advance batch preparation to prevent instant stockouts within peak meal windows.
 2. **Asymmetric Price Elasticity:** High-volume staple categories (Beverages, Rice Bowls) exhibit inelastic demand within a $\pm 10\%$ price corridor, enabling selective margin recovery without volume degradation. In contrast, premium entrees (Continental, Seafood) exhibit strong downward elasticity when priced above catalog base price.
