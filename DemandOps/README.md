@@ -148,7 +148,6 @@ $$\text{WAPE} = \frac{\sum_{i=1}^N |y_i - \hat{y}_i|}{\sum_{i=1}^N y_i} \times 1
 
 The raw forward test dataset ([`data/raw/test.csv`](./data/raw/test.csv)) spans **weeks 146 through 155 (10 weeks forward)**. Because future actual orders are unavailable, future lags (`lag_1`, `lag_2`, `lag_4`) and rolling statistics (`rolling_mean_4`, `rolling_std_4`) are unknown for weeks 147 onward.
 
-To simulate real-world weekly operations without lookahead bias, DemandOps implements an **Autoregressive Multi-Step Roll-Forward Inference Engine** in [`notebooks/test_evaluation.ipynb`](./notebooks/test_evaluation.ipynb):
 
 ```mermaid
 flowchart TD
@@ -211,15 +210,14 @@ DemandOps/
 │       ├── processed_data.csv     ← Complete engineered panel with lags & rolling stats
 │       ├── latest_known_state.csv ← Week 145 lookup cache for fast app initialization
 │       ├── operational_summary.json ← Pre-computed portfolio distributions for instant load
-│       └── submission_lgb.csv     ← 10-week autoregressive out-of-sample predictions
+│       └── merged_data.csv        ← Final merged dataset for model training and evaluation
 ├── models/
 │   ├── lgb_model.joblib           ← Serialized LightGBM regressor
 │   └── lgb_model_bundle.joblib    ← Production bundle (model, feature contract, metadata)
 ├── notebooks/
 │   ├── EDA.ipynb                  ← Exploratory data analysis & distribution profiling
 │   ├── feature_engineering.ipynb  ← Panel construction, lag generation & temporal splitting
-│   ├── model_training.ipynb       ← 4-model benchmarking (Naive, Ridge, LightGBM, LSTM)
-│   └── test_evaluation.ipynb      ← Autoregressive multi-step roll-forward pipeline
+│   └── model_training.ipynb       ← 4-model benchmarking (Naive, Ridge, LightGBM, LSTM)
 └── src/
     ├── __init__.py
     ├── data_loader.py             ← Cached loaders for metadata, states & summaries
