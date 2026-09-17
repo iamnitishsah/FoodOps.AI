@@ -1,0 +1,29 @@
+{
+  "by_category": [
+    {"category": "american", "total_orders": 19500, "avg_duration_min": 44.5},
+    {"category": "pizza", "total_orders": 17200, "avg_duration_min": 46.2},
+    {"category": "mexican", "total_orders": 17100, "avg_duration_min": 43.8},
+    {"category": "burger", "total_orders": 10900, "avg_duration_min": 42.1},
+    {"category": "sandwich", "total_orders": 10000, "avg_duration_min": 43.5},
+    {"category": "chinese", "total_orders": 9000, "avg_duration_min": 47.0},
+    {"category": "japanese", "total_orders": 8500, "avg_duration_min": 45.1},
+    {"category": "dessert", "total_orders": 6000, "avg_duration_min": 38.5}
+  ],
+  "by_market": [
+    {"market_id": "Market 1", "total_orders": 55000, "avg_duration_min": 47.5},
+    {"market_id": "Market 2", "total_orders": 45000, "avg_duration_min": 43.1},
+    {"market_id": "Market 3", "total_orders": 30000, "avg_duration_min": 46.8},
+    {"market_id": "Market 4", "total_orders": 25000, "avg_duration_min": 44.0},
+    {"market_id": "Market 5", "total_orders": 22000, "avg_duration_min": 42.5},
+    {"market_id": "Market 6", "total_orders": 18788, "avg_duration_min": 48.2}
+  ],
+  "daily_platform_demand": [
+    {"day": "Monday (0)", "num_orders": 25000},
+    {"day": "Tuesday (1)", "num_orders": 24000},
+    {"day": "Wednesday (2)", "num_orders": 26000},
+    {"day": "Thursday (3)", "num_orders": 27000},
+    {"day": "Friday (4)", "num_orders": 32000},
+    {"day": "Saturday (5)", "num_orders": 33000},
+    {"day": "Sunday (6)", "num_orders": 28788}
+  ]
+}
