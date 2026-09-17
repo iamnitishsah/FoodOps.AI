@@ -1,15 +1,29 @@
 # FoodOps.AI
 
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
-[![DemandOps Deployed](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://foodops-ai-demandops.streamlit.app/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org/)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
+[![XGBoost](https://img.shields.io/badge/XGBoost-189B4C?logo=xgboost&logoColor=white)](https://xgboost.readthedocs.io/)
+[![Pandas](https://img.shields.io/badge/Pandas-150458?logo=pandas&logoColor=white)](https://pandas.pydata.org/)
+[![NumPy](https://img.shields.io/badge/NumPy-013243?logo=numpy&logoColor=white)](https://numpy.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Status](https://img.shields.io/badge/DemandOps-Complete%20%26%20Deployed-emerald.svg)](https://foodops-ai-demandops.streamlit.app/)
 
 **FoodOps.AI** is an enterprise-grade food delivery machine learning platform built around four independent, self-contained operational intelligence modules: **demand forecasting**, **delivery time (ETA) prediction**, **personalized menu recommendation**, and **experimentation / causal inference**.
 
 Each module solves a high-impact operational decision problem using real-world or realistically simulated data, progressing from exploratory data analysis and simple baselines to production-grade ML architectures and interactive operations consoles.
 
-> 🚀 **DemandOps Live Cloud Application:** [https://foodops-ai-demandops.streamlit.app/](https://foodops-ai-demandops.streamlit.app/)
+### 📊 DemandOps
+
+> 🚀 **Live Cloud Application**  
+> [https://foodops-demand.streamlit.app/](https://foodops-demand.streamlit.app/)
+
+---
+
+### 🛵 DeliveryOps
+
+> 🚀 **Live Cloud Application**  
+> [https://foodops-delivery.streamlit.app/](https://foodops-delivery.streamlit.app/)
 
 ---
 
@@ -17,8 +31,8 @@ Each module solves a high-impact operational decision problem using real-world o
 
 | Module | Operational Domain | Primary Modeling Paradigm | Benchmark KPI | Status | Live Console / Documentation |
 | :--- | :--- | :--- | :---: | :---: | :--- |
-| **Module 1: DemandOps** | Weekly Fulfillment Demand Forecasting | LightGBM GBDT, PyTorch LSTM, Ridge | **28.75% WAPE** | 🟢 **Complete & Deployed** | [Live App](https://foodops-ai-demandops.streamlit.app/) · [DemandOps README](./DemandOps/README.md) |
-| **Module 2: DeliveryOps** | Real-Time Order Delivery ETA Prediction | Gradient Boosted Trees & Uncertainty Intervals | MAE / P90 Error | 🟡 Queued (Next) | [DeliveryOps README](./DeliveryOps/README.md) |
+| **Module 1: DemandOps** | Weekly Fulfillment Demand Forecasting | LightGBM GBDT, PyTorch LSTM, Ridge | **28.75% WAPE** | 🟢 **Complete & Deployed** | [Live App](https://foodops-demand.streamlit.app/) · [DemandOps README](./DemandOps/README.md) |
+| **Module 2: DeliveryOps** | Real-Time Order Delivery ETA Prediction | Gradient Boosted Trees (Quantile / Pinball Loss) | MAE: **10.29 min** · P90 Coverage: **86.70%** | 🟢 **Complete & Deployed** | [Live App](https://foodops-delivery.streamlit.app/) · [DeliveryOps README](./DeliveryOps/README.md) |
 | **Module 3: PersonalizeOps** | Implicit Feedback Dish & Restaurant Ranking | Matrix Factorization & Two-Tower Embeddings | NDCG@10 / Recall@10 | ⚪ Queued | [PersonalizeOps README](./PersonalizeOps/README.md) |
 | **Module 4: Experimentation** | A/B Test Harness & Causal Inference | Frequentist/Bayesian Testing, DiD, Matching | SRM / Uplift / Power | ⚪ Queued | [Experimentation README](./Experimentation/README.md) |
 
@@ -73,7 +87,6 @@ Decentralized fulfillment centers face a severe tradeoff: over-predicting weekly
 - **Leakage-Free Temporal Validation:** Trained strictly on historical weeks 1 to 131 and evaluated on unseen hold-out weeks 132 to 145 (14 continuous weeks) to prevent lookahead bias.
 - **Supply Chain Feature Engineering:** Autoregressive lags (`lag_1`, `lag_2`, `lag_4`), 4-week rolling statistics (`rolling_mean_4`, `rolling_std_4`), non-linear discount elasticity (`price_change_pct`), promotional indicators (`emailer_for_promotion`, `homepage_featured`), calendar seasonality (`week_of_year`), and center/meal categorical metadata.
 - **Target Transformation:** Trained on $\log(1 + \mathrm{num\_orders})$ for variance stabilization, with inverted non-negative predictions $\max(0, \exp(\hat{y}) - 1)$.
-- **Autoregressive Multi-Step Roll-Forward Engine:** Iterative state-lookup engine predicting 32,573 rows for out-of-sample forward horizon weeks 146–155 ([`submission_lgb.csv`](./DemandOps/data/processed/submission_lgb.csv)) with 0 missing or negative values.
 
 ### Model Benchmark Scoreboard
 
@@ -97,17 +110,23 @@ Decentralized fulfillment centers face a severe tradeoff: over-predicting weekly
 
 ## Module 2: DeliveryOps (ETA Prediction)
 
-**Status:** 🟡 Queued (Next Module)  
-**Folder:** [`DeliveryOps/`](./DeliveryOps/README.md)
+**Status:** 🟢 **Complete & Live Deployed**  
+**Detailed Documentation / Folder:** [`DeliveryOps/README.md`](./DeliveryOps/README.md)  
+**Interactive Live Console:** [https://foodops-delivery.streamlit.app/](https://foodops-delivery.streamlit.app/)
 
 ### Operational Problem
-Predict total order delivery duration (order placed $\to$ customer doorstep) given distance, time of day, weather, traffic congestion, and kitchen preparation load. 
+Predict total order delivery duration (order placed → customer doorstep) given distance, time of day, weather, traffic congestion, and kitchen preparation load. DeliveryOps emphasizes uncertainty-aware SLAs by predicting P10/P50/P90 quantiles so operations can promise customer-facing windows (e.g., "35–50 minutes") with calibrated coverage.
 
 ### What's Involved:
 - Spatial feature engineering (haversine/OSRM routing distances, zone clustering).
-- Gradient boosted regression models with calibrated prediction intervals (P10, P50, P90) to provide customer-facing delivery promises.
-- Error decomposition by delivery segment (rush hour vs. off-peak, extreme weather vs. clear).
+- Gradient boosted quantile regression models (Pinball Loss) producing P10/P50/P90 estimates for optimistic, expected, and promised delivery timelines.
+- Error decomposition by delivery segment (rush hour vs. off-peak, extreme weather vs. clear) and SHAP-based explainability.
 - Interactive dispatch and ETA simulator in Streamlit.
+
+### Champion Model & Operational KPIs
+- **Champion:** Tuned LightGBM (P10/P50/P90 quantile models) — Optuna-tuned hyperparameters.
+- **Test MAE:** **10.29 minutes** (val/test benchmark)
+- **P90 Coverage:** **86.70%** — the promised window meets SLA coverage in ~87/100 deliveries.
 
 ---
 
@@ -153,26 +172,14 @@ FoodOps.AI/
 ├── LICENSE                            ← MIT license
 │
 ├── DemandOps/                         ← Module 1: Demand Forecasting (Complete & Live)
-│   ├── README.md                      ← Comprehensive module documentation & results
+│   ├── README.md
 │   ├── app/
-│   │   ├── streamlit_app.py           ← Interactive Streamlit operations console
-│   │   └── theme.py                   ← Theme tokens & responsive Plotly configurations
-│   ├── data/
-│   │   ├── raw/                       ← Fulfillment center, meal, train & test CSVs
-│   │   └── processed/                 ← Engineered panels, state caches & submission
+│   ├── data/{raw,processed}/
 │   ├── models/
-│   │   ├── lgb_model.joblib           ← Serialized LightGBM regressor
-│   │   └── lgb_model_bundle.joblib    ← Production bundle (model, feature contract, metadata)
 │   ├── notebooks/
-│   │   ├── EDA.ipynb                  ← Exploratory data analysis
-│   │   ├── feature_engineering.ipynb  ← Panel generation & temporal feature engineering
-│   │   ├── model_training.ipynb       ← 4-model benchmarking (Naive, Ridge, LightGBM, LSTM)
-│   │   └── test_evaluation.ipynb      ← Autoregressive multi-step roll-forward evaluation
 │   └── src/
-│       ├── data_loader.py             ← Cached loaders for metadata & summaries
-│       └── inference.py               ← Single-row inference, elasticity & promo simulations
 │
-├── DeliveryOps/                       ← Module 2: ETA Prediction (Queued)
+├── DeliveryOps/                       ← Module 2: ETA Prediction (Complete & Live)
 │   ├── README.md
 │   ├── app/
 │   ├── data/{raw,processed}/
@@ -212,7 +219,7 @@ Each module maintains its own dedicated `data/`, `models/`, `notebooks/`, `src/`
 Development proceeds across four sequential operational stages:
 
 1. **DemandOps (Demand Forecasting)** — **Complete & Live Deployed**: Core supply chain foundation. Ingested 145 weeks of fulfillment transactions, engineered temporal lags, benchmarked 4 models (28.75% WAPE), executed autoregressive roll-forward test inference, and deployed the interactive Streamlit dashboard.
-2. **DeliveryOps (ETA Prediction)** — Predict customer delivery duration based on route distance, weather, and fulfillment load with calibrated uncertainty intervals.
+2. **DeliveryOps (ETA Prediction)** — **Complete & Live Deployed**: Tuned LightGBM quantile models (P10/P50/P90) for SLA-aware ETAs (Test MAE **10.29 min**, P90 Coverage **86.70%**). Predicts customer delivery duration based on route distance, weather, and fulfillment load with calibrated uncertainty intervals.
 3. **PersonalizeOps (Recommendation Engine)** — Rank dishes and restaurants for users based on sparse, implicit interaction histories using matrix factorization and deep two-tower architectures.
 4. **Experimentation (A/B Testing & Causal Inference)** — Establish the statistical experimentation harness to evaluate changes (recommendations, pricing, dispatch rules) with guardrail checks against sample ratio mismatch and novelty effects.
 
