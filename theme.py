@@ -328,7 +328,7 @@ def masthead(
 <div class="fo-masthead">
     <div class="fo-brand-group">
         <div class="fo-wordmark"><span class="fo-dot"></span>FoodOps.AI</div>
-        <div class="fo-tagline">Enterprise Food Delivery Operational Intelligence Platform</div>
+        <div class="fo-tagline">Food Delivery Operational Intelligence Platform</div>
     </div>
     <div class="fo-masthead-meta">
         <div class="fo-status-badge"><span class="fo-status-dot"></span>{model_label}</div>

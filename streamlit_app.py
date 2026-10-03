@@ -105,7 +105,7 @@ theme.masthead(
 col_intro, col_gh = st.columns([4, 1])
 with col_intro:
     st.markdown(
-        '''FoodOps.AI is an enterprise-grade food delivery machine learning platform built around four independent, self-contained operational intelligence modules: demand forecasting, delivery time (ETA) prediction, personalized menu recommendation, and experimentation / causal inference. Each module solves a high-impact operational decision problem using real-world or realistically simulated data, progressing from exploratory data analysis and simple baselines to production-grade ML architectures and interactive operations consoles.'''
+        '''FoodOps.AI is an end-to-end food delivery machine learning platform built around four independent, self-contained operational intelligence modules: demand forecasting, delivery time (ETA) prediction, personalized menu recommendation, and experimentation / causal inference. Each module solves a high-impact operational decision problem using real-world or realistically simulated data, progressing from exploratory data analysis and simple baselines to stronger machine learning models and interactive dashboards.'''
     )
 with col_gh:
     st.link_button("⭐ GitHub Repo", GITHUB_URL, use_container_width=True)

@@ -9,9 +9,9 @@
 [![NumPy](https://img.shields.io/badge/NumPy-013243?logo=numpy&logoColor=white)](https://numpy.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-**FoodOps.AI** is an enterprise-grade food delivery machine learning platform built around four independent, self-contained operational intelligence modules: **demand forecasting**, **delivery time (ETA) prediction**, **personalized menu recommendation**, and **experimentation / causal inference**.
+**FoodOps.AI** is an end-to-end food delivery machine learning platform built around four independent, self-contained operational intelligence modules: **demand forecasting**, **delivery time (ETA) prediction**, **personalized menu recommendation**, and **experimentation / causal inference**.
 
-Each module solves a high-impact operational decision problem using real-world or realistically simulated data, progressing from exploratory data analysis and simple baselines to production-grade ML architectures and interactive operations consoles.
+Each module solves a high-impact operational decision problem using real-world or realistically simulated data, progressing from exploratory data analysis and simple baselines to stronger machine learning models and interactive dashboards.
 
 ### 📊 DemandOps
 
@@ -214,7 +214,7 @@ FoodOps.AI/
 Each module maintains its own dedicated dataset folder, `models/`, `notebooks/`, `src/`, and `app/` subdirectories. This architecture ensures:
 - **Zero Coupling:** Each operational domain can be explored, run, trained, and audited in complete isolation.
 - **No Premature Abstraction:** Machine learning problems in time series, spatial regression, collaborative filtering, and causal inference require distinct schemas, preprocessing pipelines, and evaluation harnesses.
-- **Plug-and-Play Production:** Every module’s Streamlit console functions as an independent micro-frontend that can be deployed standalone or embedded into an enterprise operations portal.
+- **Standalone Deployment:** Every module’s Streamlit app runs independently and is deployed on its own; the landing page simply links to each one.
 
 ---
 
