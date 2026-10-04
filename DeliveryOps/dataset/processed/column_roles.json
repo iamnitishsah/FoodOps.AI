@@ -1,0 +1,46 @@
+{
+  "target": [
+    "total_delivery_duration"
+  ],
+  "bookkeeping_not_features": [
+    "raw_row_id",
+    "actual_delivery_time",
+    "created_at",
+    "created_at_local",
+    "order_date",
+    "split"
+  ],
+  "categorical": [
+    "market_id",
+    "order_protocol",
+    "store_primary_category",
+    "meal_period"
+  ],
+  "high_cardinality_encode_only": [
+    "store_id"
+  ],
+  "numeric": [
+    "total_items",
+    "subtotal",
+    "num_distinct_items",
+    "min_item_price",
+    "max_item_price",
+    "total_onshift_dashers",
+    "total_busy_dashers",
+    "total_outstanding_orders",
+    "estimated_order_place_duration",
+    "estimated_store_to_consumer_driving_duration",
+    "order_hour",
+    "order_day_of_week"
+  ],
+  "flags": [
+    "is_weekend",
+    "store_category_imputed",
+    "dasher_telemetry_missing"
+  ],
+  "nullable_columns": [
+    "total_onshift_dashers",
+    "total_busy_dashers",
+    "total_outstanding_orders"
+  ]
+}

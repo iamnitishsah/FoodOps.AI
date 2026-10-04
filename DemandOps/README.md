@@ -339,7 +339,7 @@ The app opens at `http://localhost:8501`.
 
 ### Reproducing the analysis
 
-Place the Kaggle files in `DemandOps/dataset/raw/` and run the notebooks in order: `EDA.ipynb` → `feature_engineering.ipynb` → `model_training.ipynb`. The training notebook skips any model whose saved bundle matches the current features and parameters, and re-fits it when they change.
+Place the Kaggle files in `DemandOps/dataset/raw/` and run the notebooks in order: `EDA_v1.ipynb` → `feature_engineering.ipynb` → `model_training.ipynb`. The training notebook skips any model whose saved bundle matches the current features and parameters, and re-fits it when they change.
 
 ---
 

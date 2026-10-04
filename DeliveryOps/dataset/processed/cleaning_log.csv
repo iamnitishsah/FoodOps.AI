@@ -1,0 +1,12 @@
+step,rows_removed,pct_of_raw,reason,rows_remaining
+no delivery time,7,0.0035455963693093178,"Order never completed, so there is no label",197421
+> 2 h,1090,0.5521000060781652,Business rule: out of scope for ETA promises,196331
+< 15 min,328,0.16613651559049375,"Business rule: implausibly fast, includes any <= 0 s clock errors",196003
+market_id missing,974,0.4933444091010394,"Under 1% missing, dropped",195029
+order_protocol missing,505,0.2557894523573151,"Under 1% missing, dropped",194524
+drive estimate missing,522,0.2644001863970663,"Under 1% missing, dropped",194002
+negative dasher/order counts,80,0.04052110136353506,A count of dashers or orders cannot be negative,193922
+min_item_price > max_item_price,775,0.39254816945924587,Logically impossible price pair,193147
+subtotal <= 0,176,0.08914642299977714,Zero or negative order value,192971
+drive estimate == 0,8,0.004052110136353506,Zero-second drive is not plausible,192963
+total_items > P99.9,168,0.08509431286342363,"Extreme order size (> 25 items), ~0.1% of rows",192795
