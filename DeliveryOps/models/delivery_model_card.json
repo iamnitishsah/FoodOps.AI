@@ -1,0 +1,556 @@
+{
+  "model": "FoodOps.AI DeliveryOps ETA (LightGBM P10/P50/P90)",
+  "created": "2026-10-04",
+  "data": {
+    "source": "DoorDash early-2015 historical_data.csv",
+    "rows_after_cleaning": 192730,
+    "train_rows": 141188,
+    "test_rows": 51542,
+    "train_window": [
+      "2015-01-21",
+      "2015-02-10"
+    ],
+    "test_window": [
+      "2015-02-11",
+      "2015-02-17"
+    ],
+    "scope": "deliveries of 15 minutes to 2 hours"
+  },
+  "target": {
+    "name": "total_delivery_duration",
+    "unit": "seconds",
+    "training_scale": "raw seconds"
+  },
+  "features": [
+    "market_id",
+    "order_protocol",
+    "store_primary_category",
+    "total_items",
+    "subtotal",
+    "num_distinct_items",
+    "min_item_price",
+    "max_item_price",
+    "total_onshift_dashers",
+    "total_busy_dashers",
+    "total_outstanding_orders",
+    "estimated_order_place_duration",
+    "estimated_store_to_consumer_driving_duration",
+    "order_hour",
+    "order_day_of_week",
+    "busy_dasher_ratio",
+    "outstanding_order_ratio",
+    "store_target_enc",
+    "store_category_imputed",
+    "dasher_telemetry_missing"
+  ],
+  "training": {
+    "objectives": {
+      "p10": "quantile alpha 0.1",
+      "p50": "l1",
+      "p90": "quantile alpha 0.9"
+    },
+    "rounds": {
+      "p10": 200,
+      "p50": 300,
+      "p90": 100
+    },
+    "seed": 42,
+    "params": {
+      "learning_rate": 0.05,
+      "num_leaves": 31,
+      "min_child_samples": 100,
+      "subsample": 0.8,
+      "subsample_freq": 1,
+      "colsample_bytree": 0.8
+    }
+  },
+  "validation": {
+    "folds": "two forward 7-day folds inside train (A: fit Jan 21-27, val Jan 28-Feb 3; B: fit Jan 21-Feb 3, val Feb 4-10)",
+    "point_models": [
+      {
+        "model": "lightgbm final (20 features, 300 rounds)",
+        "MAE A": 11.19,
+        "MAE B": 9.88,
+        "MAE mean": 10.54,
+        "bias A": -4.09,
+        "bias B": -1.02
+      },
+      {
+        "model": "lightgbm reference (300 rounds)",
+        "MAE A": 11.2,
+        "MAE B": 9.88,
+        "MAE mean": 10.54,
+        "bias A": -4.09,
+        "bias B": -1.02
+      },
+      {
+        "model": "ridge (best of grid)",
+        "MAE A": 11.37,
+        "MAE B": 10.13,
+        "MAE mean": 10.75,
+        "bias A": -3.81,
+        "bias B": -0.69
+      },
+      {
+        "model": "market x hour median",
+        "MAE A": 13.41,
+        "MAE B": 11.82,
+        "MAE mean": 12.62,
+        "bias A": -6.0,
+        "bias B": -1.77
+      },
+      {
+        "model": "naive median",
+        "MAE A": 14.05,
+        "MAE B": 12.47,
+        "MAE mean": 13.26,
+        "bias A": -6.24,
+        "bias B": -2.07
+      }
+    ],
+    "intervals": {
+      "A": {
+        "P10 coverage %": 11.185,
+        "P90 coverage %": 84.832,
+        "80% interval coverage %": 73.647,
+        "mean width (min)": 29.423,
+        "pinball P10": 1.973,
+        "pinball P90": 3.314,
+        "MAE P50": 11.19,
+        "rows re-ordered %": 0.0
+      },
+      "B": {
+        "P10 coverage %": 12.672,
+        "P90 coverage %": 90.19,
+        "80% interval coverage %": 77.518,
+        "mean width (min)": 30.622,
+        "pinball P10": 1.754,
+        "pinball P90": 2.817,
+        "MAE P50": 9.885,
+        "rows re-ordered %": 0.0
+      }
+    }
+  },
+  "test": {
+    "point_models": {
+      "naive median": {
+        "MAE (min)": 13.053,
+        "bias (min)": -4.253,
+        "vs ridge (min)": 2.777,
+        "vs naive (min)": 0.0
+      },
+      "market x hour median": {
+        "MAE (min)": 12.259,
+        "bias (min)": -4.064,
+        "vs ridge (min)": 1.984,
+        "vs naive (min)": -0.793
+      },
+      "ridge": {
+        "MAE (min)": 10.275,
+        "bias (min)": -2.629,
+        "vs ridge (min)": 0.0,
+        "vs naive (min)": -2.777
+      },
+      "lightgbm P50": {
+        "MAE (min)": 9.972,
+        "bias (min)": -3.106,
+        "vs ridge (min)": -0.303,
+        "vs naive (min)": -3.08
+      }
+    },
+    "intervals": {
+      "P10 coverage % (nominal 10)": 9.134,
+      "P90 coverage % (nominal 90)": 88.19,
+      "80% interval coverage % (nominal 80)": 79.056,
+      "mean width (min)": 30.615,
+      "pinball P10": 1.787,
+      "pinball P90": 2.812
+    }
+  },
+  "segments": {
+    "market": {
+      "1": {
+        "orders": 9594,
+        "share %": 18.61,
+        "MAE_lgbm": 12.02,
+        "MAE_ridge": 12.44,
+        "bias": -5.29,
+        "P10_cov": 7.09,
+        "P90_cov": 86.23,
+        "width": 35.81
+      },
+      "2": {
+        "orders": 14230,
+        "share %": 27.61,
+        "MAE_lgbm": 9.07,
+        "MAE_ridge": 9.28,
+        "bias": -2.71,
+        "P10_cov": 9.49,
+        "P90_cov": 87.87,
+        "width": 27.14
+      },
+      "3": {
+        "orders": 5977,
+        "share %": 11.6,
+        "MAE_lgbm": 11.18,
+        "MAE_ridge": 11.63,
+        "bias": -4.02,
+        "P10_cov": 8.45,
+        "P90_cov": 87.0,
+        "width": 32.98
+      },
+      "4": {
+        "orders": 12203,
+        "share %": 23.68,
+        "MAE_lgbm": 9.23,
+        "MAE_ridge": 9.45,
+        "bias": -2.21,
+        "P10_cov": 10.3,
+        "P90_cov": 88.86,
+        "width": 28.48
+      },
+      "5": {
+        "orders": 5208,
+        "share %": 10.1,
+        "MAE_lgbm": 9.1,
+        "MAE_ridge": 9.49,
+        "bias": -2.14,
+        "P10_cov": 9.16,
+        "P90_cov": 89.13,
+        "width": 29.11
+      },
+      "6": {
+        "orders": 4330,
+        "share %": 8.4,
+        "MAE_lgbm": 9.89,
+        "MAE_ridge": 10.14,
+        "bias": -2.01,
+        "P10_cov": 10.14,
+        "P90_cov": 92.22,
+        "width": 35.11
+      }
+    },
+    "hour": {
+      "7": {
+        "orders": 140,
+        "share %": 0.27,
+        "MAE_lgbm": 13.14,
+        "MAE_ridge": 15.02,
+        "bias": -2.73,
+        "P10_cov": 8.57,
+        "P90_cov": 87.14,
+        "width": 37.92
+      },
+      "8": {
+        "orders": 537,
+        "share %": 1.04,
+        "MAE_lgbm": 11.16,
+        "MAE_ridge": 12.06,
+        "bias": -2.48,
+        "P10_cov": 9.12,
+        "P90_cov": 88.83,
+        "width": 34.44
+      },
+      "9": {
+        "orders": 882,
+        "share %": 1.71,
+        "MAE_lgbm": 10.9,
+        "MAE_ridge": 11.67,
+        "bias": -3.69,
+        "P10_cov": 8.5,
+        "P90_cov": 87.87,
+        "width": 33.09
+      },
+      "10": {
+        "orders": 1304,
+        "share %": 2.53,
+        "MAE_lgbm": 9.34,
+        "MAE_ridge": 9.95,
+        "bias": -2.06,
+        "P10_cov": 11.58,
+        "P90_cov": 91.49,
+        "width": 30.77
+      },
+      "11": {
+        "orders": 3552,
+        "share %": 6.89,
+        "MAE_lgbm": 10.39,
+        "MAE_ridge": 10.77,
+        "bias": -3.97,
+        "P10_cov": 7.38,
+        "P90_cov": 87.27,
+        "width": 31.11
+      },
+      "12": {
+        "orders": 4138,
+        "share %": 8.03,
+        "MAE_lgbm": 9.64,
+        "MAE_ridge": 9.78,
+        "bias": -3.43,
+        "P10_cov": 8.14,
+        "P90_cov": 88.57,
+        "width": 30.42
+      },
+      "13": {
+        "orders": 2902,
+        "share %": 5.63,
+        "MAE_lgbm": 8.87,
+        "MAE_ridge": 9.07,
+        "bias": -1.88,
+        "P10_cov": 11.03,
+        "P90_cov": 91.9,
+        "width": 29.74
+      },
+      "14": {
+        "orders": 2264,
+        "share %": 4.39,
+        "MAE_lgbm": 9.15,
+        "MAE_ridge": 9.36,
+        "bias": -2.15,
+        "P10_cov": 10.2,
+        "P90_cov": 90.11,
+        "width": 29.18
+      },
+      "15": {
+        "orders": 2078,
+        "share %": 4.03,
+        "MAE_lgbm": 9.57,
+        "MAE_ridge": 9.86,
+        "bias": -2.13,
+        "P10_cov": 11.31,
+        "P90_cov": 89.08,
+        "width": 29.46
+      },
+      "16": {
+        "orders": 3340,
+        "share %": 6.48,
+        "MAE_lgbm": 8.97,
+        "MAE_ridge": 9.37,
+        "bias": -2.14,
+        "P10_cov": 9.64,
+        "P90_cov": 89.94,
+        "width": 29.01
+      },
+      "17": {
+        "orders": 7411,
+        "share %": 14.38,
+        "MAE_lgbm": 9.74,
+        "MAE_ridge": 9.98,
+        "bias": -2.04,
+        "P10_cov": 10.5,
+        "P90_cov": 89.11,
+        "width": 30.3
+      },
+      "18": {
+        "orders": 9612,
+        "share %": 18.65,
+        "MAE_lgbm": 10.44,
+        "MAE_ridge": 10.66,
+        "bias": -3.73,
+        "P10_cov": 7.63,
+        "P90_cov": 86.09,
+        "width": 31.04
+      },
+      "19": {
+        "orders": 7235,
+        "share %": 14.04,
+        "MAE_lgbm": 10.72,
+        "MAE_ridge": 11.02,
+        "bias": -3.95,
+        "P10_cov": 8.57,
+        "P90_cov": 87.56,
+        "width": 32.45
+      },
+      "20": {
+        "orders": 3955,
+        "share %": 7.67,
+        "MAE_lgbm": 10.01,
+        "MAE_ridge": 10.43,
+        "bias": -3.73,
+        "P10_cov": 8.95,
+        "P90_cov": 86.75,
+        "width": 29.64
+      },
+      "21": {
+        "orders": 1831,
+        "share %": 3.55,
+        "MAE_lgbm": 9.95,
+        "MAE_ridge": 10.24,
+        "bias": -3.74,
+        "P10_cov": 10.54,
+        "P90_cov": 87.06,
+        "width": 28.77
+      },
+      "22": {
+        "orders": 361,
+        "share %": 0.7,
+        "MAE_lgbm": 9.6,
+        "MAE_ridge": 9.95,
+        "bias": -3.14,
+        "P10_cov": 9.97,
+        "P90_cov": 89.2,
+        "width": 28.64
+      }
+    },
+    "day": {
+      "Wed 02-11": {
+        "orders": 6577,
+        "share %": 12.76,
+        "MAE_lgbm": 9.33,
+        "MAE_ridge": 9.56,
+        "bias": -1.11,
+        "P10_cov": 10.95,
+        "P90_cov": 90.86,
+        "width": 30.42
+      },
+      "Thu 02-12": {
+        "orders": 7120,
+        "share %": 13.81,
+        "MAE_lgbm": 9.04,
+        "MAE_ridge": 9.28,
+        "bias": -3.5,
+        "P10_cov": 8.02,
+        "P90_cov": 88.99,
+        "width": 28.5
+      },
+      "Fri 02-13": {
+        "orders": 8451,
+        "share %": 16.4,
+        "MAE_lgbm": 10.25,
+        "MAE_ridge": 10.6,
+        "bias": -3.75,
+        "P10_cov": 7.67,
+        "P90_cov": 86.31,
+        "width": 30.83
+      },
+      "Sat 02-14": {
+        "orders": 8455,
+        "share %": 16.4,
+        "MAE_lgbm": 10.76,
+        "MAE_ridge": 11.22,
+        "bias": -4.43,
+        "P10_cov": 8.35,
+        "P90_cov": 85.63,
+        "width": 31.21
+      },
+      "Sun 02-15": {
+        "orders": 8891,
+        "share %": 17.25,
+        "MAE_lgbm": 10.6,
+        "MAE_ridge": 10.84,
+        "bias": -3.38,
+        "P10_cov": 8.77,
+        "P90_cov": 88.51,
+        "width": 33.14
+      },
+      "Mon 02-16": {
+        "orders": 6049,
+        "share %": 11.74,
+        "MAE_lgbm": 9.52,
+        "MAE_ridge": 9.93,
+        "bias": -1.33,
+        "P10_cov": 12.58,
+        "P90_cov": 89.93,
+        "width": 29.57
+      },
+      "Tue 02-17": {
+        "orders": 5999,
+        "share %": 11.64,
+        "MAE_lgbm": 9.8,
+        "MAE_ridge": 9.95,
+        "bias": -3.43,
+        "P10_cov": 8.7,
+        "P90_cov": 88.35,
+        "width": 29.52
+      }
+    },
+    "telemetry": {
+      "telemetry missing": {
+        "orders": 4818,
+        "share %": 9.35,
+        "MAE_lgbm": 10.09,
+        "MAE_ridge": 10.31,
+        "bias": -2.01,
+        "P10_cov": 10.15,
+        "P90_cov": 92.34,
+        "width": 35.59
+      },
+      "telemetry present": {
+        "orders": 45810,
+        "share %": 88.88,
+        "MAE_lgbm": 9.86,
+        "MAE_ridge": 10.18,
+        "bias": -3.14,
+        "P10_cov": 9.07,
+        "P90_cov": 87.84,
+        "width": 29.86
+      },
+      "zero on-shift": {
+        "orders": 914,
+        "share %": 1.77,
+        "MAE_lgbm": 15.01,
+        "MAE_ridge": 15.04,
+        "bias": -7.0,
+        "P10_cov": 7.22,
+        "P90_cov": 84.03,
+        "width": 42.17
+      }
+    },
+    "store history": {
+      "established (25+)": {
+        "orders": 36716,
+        "share %": 71.24,
+        "MAE_lgbm": 9.54,
+        "MAE_ridge": 9.82,
+        "bias": -2.84,
+        "P10_cov": 9.3,
+        "P90_cov": 88.51,
+        "width": 29.56
+      },
+      "thin (1-24)": {
+        "orders": 14058,
+        "share %": 27.27,
+        "MAE_lgbm": 10.99,
+        "MAE_ridge": 11.34,
+        "bias": -3.69,
+        "P10_cov": 8.79,
+        "P90_cov": 87.54,
+        "width": 33.23
+      },
+      "unseen (0)": {
+        "orders": 768,
+        "share %": 1.49,
+        "MAE_lgbm": 11.97,
+        "MAE_ridge": 12.41,
+        "bias": -5.41,
+        "P10_cov": 7.68,
+        "P90_cov": 85.03,
+        "width": 33.08
+      }
+    }
+  },
+  "limitations": [
+    "Zero on-shift orders (914 test orders, 1.8%): MAE 15.0 min, bias -7.0 min, P90 coverage 84.0%. The zero_onshift flag was dropped by the pre-registered ablation and not revisited after the test week.",
+    "Stores unseen in train (768 test orders, 1.5%): MAE 12.0 min, bias -5.4 min.",
+    "Level shift: test-week median 45.3 min vs 43.9 in train; every model under-predicts (P50 bias -3.1 min).",
+    "Intervals are raw: test-week P10 coverage 9.1% (nominal 10), P90 88.2% (nominal 90), 80% interval 79.1% (nominal 80), mean width 30.6 min.",
+    "Three weeks of one early-2015 snapshot: no seasonality, weather or traffic information.",
+    "Weekday effects rest on three dates per weekday; Feb 1 (Super Bowl Sunday) is one of three train Sundays."
+  ],
+  "decisions": [
+    "Validation: two forward 7-day folds; store_target_enc recomputed inside each fold (leave-one-day-out).",
+    "Target scale: raw seconds (raw vs log1p tied on validation).",
+    "Point model: L1, 300 rounds, lr 0.05, 31 leaves, min_child_samples 100, bagging 0.8/0.8; no tuning.",
+    "Features: one-at-a-time swaps judged against a 3-seed noise floor and per-day paired plots; only zero_onshift was dropped.",
+    "Quantile rounds: smallest round within the seed spread of the pinball minimum in both folds.",
+    "No calibration of intervals; raw coverage reported.",
+    "Single fixed seed (42) for the final models; test week evaluated once."
+  ],
+  "versions": {
+    "python": "3.12.14",
+    "lightgbm": "4.7.0",
+    "scikit-learn": "1.9.1",
+    "pandas": "3.0.6",
+    "numpy": "2.5.3"
+  }
+}
