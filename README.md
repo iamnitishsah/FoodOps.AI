@@ -32,7 +32,7 @@ Each module solves a high-impact operational decision problem using real-world o
 | Module | Operational Domain | Primary Modeling Paradigm | Benchmark KPI | Status | Live Console / Documentation |
 | :--- | :--- | :--- | :---: | :---: | :--- |
 | **Module 1: DemandOps** | Weekly Fulfillment Demand Forecasting | LightGBM GBDT, PyTorch LSTM, Ridge | **28.61% WAPE** | 🟢 **Complete & Deployed** | [Live App](https://foodops-demand.streamlit.app/) · [DemandOps README](./DemandOps/README.md) |
-| **Module 2: DeliveryOps** | Real-Time Order Delivery ETA Prediction | Gradient Boosted Trees (Quantile / Pinball Loss) | MAE: **10.29 min** · P90 Coverage: **86.70%** | 🟢 **Complete & Deployed** | [Live App](https://foodops-delivery.streamlit.app/) · [DeliveryOps README](./DeliveryOps/README.md) |
+| **Module 2: DeliveryOps** | Real-Time Order Delivery ETA Prediction | LightGBM (L1 + Quantile / Pinball Loss), Ridge | MAE: **9.97 min** · P90 Coverage: **88.2%** | 🟢 **Complete & Deployed** | [Live App](https://foodops-delivery.streamlit.app/) · [DeliveryOps README](./DeliveryOps/README.md) |
 | **Module 3: PersonalizeOps** | Implicit Feedback Dish & Restaurant Ranking | Matrix Factorization & Two-Tower Embeddings | NDCG@10 / Recall@10 | ⚪ Queued | [PersonalizeOps README](./PersonalizeOps/README.md) |
 | **Module 4: Experimentation** | A/B Test Harness & Causal Inference | Frequentist/Bayesian Testing, DiD, Matching | SRM / Uplift / Power | ⚪ Queued | [Experimentation README](./Experimentation/README.md) |
 
@@ -110,26 +110,29 @@ Decentralized fulfillment centers face a severe tradeoff: over-predicting weekly
 **Interactive Live Console:** [https://foodops-delivery.streamlit.app/](https://foodops-delivery.streamlit.app/)
 
 ### Operational Problem
-Predict total order delivery duration (order placed → customer doorstep) given distance, time of day, weather, traffic congestion, and kitchen preparation load. DeliveryOps emphasizes uncertainty-aware SLAs by predicting P10/P50/P90 quantiles so operations can promise customer-facing windows (e.g., "35–50 minutes") with calibrated coverage.
+Predict total order delivery duration (order placed → customer doorstep) from the order, the store, the market, live dispatch load (on-shift, busy and outstanding dashers), the platform's drive-time estimate and the local time of day. DeliveryOps emphasizes uncertainty-aware promise windows: it predicts the P10, P50 and P90 so operations can show customers an expected time with an honest range, and it reports the coverage those ranges actually deliver. Scope: 192,730 cleaned orders across 6 markets and 6,725 stores, Jan 21 – Feb 17, 2015.
 
 - **Primary Dataset Source:** [DoorDash ETA Prediction (Kaggle)](https://www.kaggle.com/datasets/dharun4772/doordash-eta-prediction)
 
 ### Technical Highlights
-- **Target Transformation & Quantile Loss:** Delivery durations are log-transformed (log(1 + duration)) for variance stabilization; models are trained using Pinball Loss to predict P10/P50/P90 quantiles which are inverted to minutes for SLA windows.
-- **Timezone Alignment & Anomaly Truncation:** UTC timestamps localized (US/Pacific) and extreme anomalies (negative durations, >7200s) truncated to preserve model stability.
-- **Market Strain & Congestion Ratios:** Engineered ratios like `busy_dasher_ratio` and `outstanding_order_ratio` capture dispatch pressure; division-by-zero cases are capped to robustify gradients.
-- **Probabilistic Imputation & Smoothed Target Encoding:** Missing protocol fields imputed probabilistically; high-cardinality restaurant categories use Bayesian-smoothed target encoding (weight=20) to prevent overfitting.
-- **Cyclical Temporal Encodings & Robust Feature Engineering:** `order_hour` and `order_day_of_week` converted to sine/cosine pairs; feature normalization and careful truncation handle edge-case telemetry dropouts.
-- **Explainability:** SHAP is used to audit global and local explanations (e.g., `estimated_store_to_consumer_driving_duration` and `store_category_target_enc` are top drivers).
+- **Chronological Validation:** Trained on Jan 21 to Feb 10 and scored once on the held-out Feb 11 to 17 test week (51,542 orders, including Valentine's weekend). Every model choice was made on two forward 7-day folds inside the training period, so the test week never influenced selection.
+- **Scoped, Audited Cleaning:** Deliveries restricted to 15 min to 2 h; 4,698 of 197,428 rows removed (2.38%), each step logged. Dasher-telemetry gaps (8.25% of rows) are kept as missing with an explicit flag rather than imputed.
+- **Leakage-Safe Store Target Encoding:** A smoothed store average delivery time (weight 5), built leave-one-day-out for training rows and recomputed inside each validation fold; stores never seen in training fall back to the training mean.
+- **Dispatch-Load Ratios:** `busy_dasher_ratio` and `outstanding_order_ratio` (per on-shift dasher) are left missing when undefined and handled natively by LightGBM.
+- **Ablation-Driven Feature Set:** 32 candidate features reduced to 20 through one-at-a-time swaps judged against a 3-seed noise floor and per-day paired comparisons.
+- **P10/P50/P90 Quantile Models:** An L1 median model plus pinball-loss P10 and P90 models, with boosting rounds read from validation curves. Intervals are not calibrated; raw coverage is reported.
+- **Explainability:** SHAP on the P50 model (top drivers: `outstanding_order_ratio`, the drive-time estimate and `store_target_enc`).
 
 ### Model Benchmark Scoreboard
 
 | Rank | Model Architecture | Family | Test MAE (min) | P90 SLA Coverage | Status | Key Characteristics |
 | :---: | :--- | :--- | :---: | :---: | :---: | :--- |
-| 🥇 | **Tuned LightGBM (P10/50/90)** | Gradient Boosted Trees | **10.29** | **86.70%** | **Champion (Deployed)** | Hyperparameter-tuned (547 estimators); heavy regularization (`subsample=0.92`, `colsample=0.89`). |
-| 🥈 | **Baseline LightGBM** | Gradient Boosted Trees | 10.31 | 87.49% | Challenger | Default hyperparameters; slightly overfits normal weeks. |
-| 🥉 | **Ridge Regression** | L2-Regularized Linear Model | 10.89 | N/A | Linear Baseline | Pipeline with `StandardScaler` and `OneHotEncoder`. |
-| 4 | **Naive Median Baseline** | Heuristic Benchmark | 13.08 | N/A | Lower Bound | Predicts the global median (44 min). |
+| 🥇 | **LightGBM (P10/P50/P90)** | Gradient Boosted Trees | **9.97** | **88.19%** | **Champion (Deployed)** | L1 median plus pinball quantiles; 20 features, raw-seconds target, native categoricals and missing values; no hyperparameter search. |
+| 🥈 | **Ridge Regression** | L2-Regularized Linear Model | 10.28 | N/A | Linear Baseline | Log target, one-hot hour, α = 1000 picked on the forward folds. |
+| 🥉 | **Market × Hour Median** | Heuristic Lookup | 12.26 | N/A | Lookup Baseline | Median delivery time per (market, order hour). |
+| 4 | **Naive Median Baseline** | Heuristic Benchmark | 13.05 | N/A | Lower Bound | Predicts the training median (43.9 min). |
+
+*All scores come from the single unseen Feb 11–17 test week; the champion is 23.6% below the naive baseline. Intervals are raw (not calibrated): P10 coverage 9.1%, P90 coverage 88.2%, 80% interval coverage 79.1%, mean P10–P90 width 30.6 min. Validation scores, the feature ablation and segment results are in the [DeliveryOps README](./DeliveryOps/README.md#6-models--benchmark-scoreboard).*
 
 
 ---
@@ -186,7 +189,7 @@ FoodOps.AI/
 ├── DeliveryOps/                       ← Module 2: ETA Prediction (Complete & Live)
 │   ├── README.md
 │   ├── app/
-│   ├── data/{raw,processed}/
+│   ├── dataset/{raw,processed}/
 │   ├── models/
 │   ├── notebooks/
 │   └── src/
@@ -223,7 +226,7 @@ Each module maintains its own dedicated dataset folder, `models/`, `notebooks/`,
 Development proceeds across four sequential operational stages:
 
 1. **DemandOps (Demand Forecasting)** — **Complete & Live Deployed**: Core supply chain foundation. Built a full weekly (hub, dish, week) grid from 145 weeks of fulfillment transactions, engineered lag, rolling and price features, benchmarked 4 models on a chronological hold-out (**28.61% WAPE**, a 31.8% relative reduction over the naive baseline), and deployed a 10-week planning dashboard.
-2. **DeliveryOps (ETA Prediction)** — **Complete & Live Deployed**: Tuned LightGBM quantile models (P10/P50/P90) for SLA-aware ETAs (Test MAE **10.29 min**, P90 Coverage **86.70%**). Predicts customer delivery duration based on route distance, weather, and fulfillment load with calibrated uncertainty intervals.
+2. **DeliveryOps (ETA Prediction)** — **Complete & Live Deployed**: Cleaned 197,428 raw orders to 192,730, engineered 20 leakage-safe features (including a leave-one-day-out store encoding), benchmarked four models on forward-in-time folds and a held-out week, and deployed LightGBM P10/P50/P90 estimates (Test MAE **9.97 min**, 23.6% below the naive median; raw P90 coverage **88.2%**).
 3. **PersonalizeOps (Recommendation Engine)** — Rank dishes and restaurants for users based on sparse, implicit interaction histories using matrix factorization and deep two-tower architectures.
 4. **Experimentation (A/B Testing & Causal Inference)** — Establish the statistical experimentation harness to evaluate changes (recommendations, pricing, dispatch rules) with guardrail checks against sample ratio mismatch and novelty effects.
 
@@ -236,7 +239,7 @@ Development proceeds across four sequential operational stages:
 |---|---|
 | **Core Language** | Python 3.12 |
 | **Data Processing & Storage** | pandas, numpy, pyarrow, joblib |
-| **Classical ML & Gradient Boosting** | LightGBM, scikit-learn |
+| **Classical ML & Gradient Boosting** | LightGBM, scikit-learn, SHAP (explainability) |
 | **Deep Learning** | PyTorch (LSTM sequence modeling) |
 | **Interactive Applications** | Streamlit, Plotly Express, Plotly Graph Objects |
 | **Experimentation & Statistics** | SciPy, statsmodels |
