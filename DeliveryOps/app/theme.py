@@ -211,13 +211,13 @@ def apply_theme() -> None:
     st.markdown(CSS, unsafe_allow_html=True)
 
 
-def masthead(week_label: str = "Historical panel: Jan - Feb 2015 · 6 Markets · ~196k Orders", model_label: str = "LightGBM Quantile Regressor (10.29m MAE)") -> None:
+def masthead(week_label: str = "Jan 21 – Feb 17, 2015 · 6 Markets · 192,730 Orders", model_label: str = "LightGBM P10/P50/P90") -> None:
     """Render executive top navigation masthead."""
     html = textwrap.dedent(f"""\
 <div class="fo-masthead">
     <div class="fo-brand-group">
         <div class="fo-wordmark"><span class="fo-dot"></span>FoodOps.AI [DeliveryOps]</div>
-        <div class="fo-tagline">Decentralized Delivery Fulfillment &amp; Scenario Simulator</div>
+        <div class="fo-tagline">Real-Time Delivery ETA &amp; Promise-Window Simulator</div>
     </div>
     <div class="fo-masthead-meta">
         <div class="fo-status-badge"><span class="fo-status-dot"></span>Model: {model_label}</div>
@@ -258,7 +258,7 @@ def callout(text: str) -> None:
 
 def chart_layout(fig: Any, **kwargs) -> Any:
     """Apply theme-neutral styling to Plotly figures.
-    
+
     Avoids hardcoding text or background colors, allowing Streamlit's native
     Plotly theme engine to dynamically render clean fonts in both Light and Dark modes.
     """

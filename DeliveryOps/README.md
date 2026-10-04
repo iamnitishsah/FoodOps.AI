@@ -352,8 +352,9 @@ Implemented in [`app/streamlit_app.py`](./app/streamlit_app.py) with a theme tha
 1. **Order inputs.** Market, store, order hour and weekday, cart size and value, protocol and the platform's drive-time estimate. The panel shows the selected store's training history and flags stores the model has never seen.
 2. **Dispatch load.** On-shift dashers, busy dashers and outstanding orders, or a switch to mark telemetry as unavailable, which mirrors how the model was trained.
 3. **Delivery window.** The expected time (P50) with the P10–P90 window, the window width, and the model's average under-estimation for context.
-4. **What-if charts.** The same order across every hour of the day, and across rising dispatch load.
-5. **Why this ETA.** A SHAP breakdown of the entered order in minutes, showing which inputs push the estimate up or down.
+4. **Reliability.** Test-week error, bias and P90 coverage for orders like this one: the same store-history band, dispatch state and market.
+5. **What-if charts.** The same order across every hour of the day, and across rising dispatch load.
+6. **Why this ETA.** A SHAP breakdown of the entered order in minutes, showing which inputs push the estimate up or down.
 
 ### How the ETA is produced
 
@@ -363,11 +364,11 @@ At start-up the app rebuilds the features for a sample of orders from the saved 
 
 ### Tab 2: Model Benchmarks & Evaluation
 
-The scoreboard, interval coverage against nominal, the feature ablation, test-week segments and the documented limitations, all read from `models/delivery_model_card.json`, plus the top LightGBM features by gain share.
+The scoreboard, interval coverage against nominal, test-week segments and the documented limitations are read from `models/delivery_model_card.json`. The tab also shows the feature ablation table (recorded from the training notebook in `src/data_loader.py`) and the top LightGBM features by gain share.
 
 ### Tab 3: Network & Delivery Analytics
 
-Delivery time by hour, weekday and market, how dispatch load relates to delivery time, and telemetry coverage by market.
+Network KPIs, delivery time by hour, weekday and market, how dispatch load relates to delivery time, and telemetry coverage by market.
 
 ---
 
