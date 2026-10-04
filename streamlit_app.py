@@ -48,14 +48,16 @@ MODULES = [
     {
         "icon": "🛵",
         "name": "DeliveryOps",
-        "tagline": "Real-Time Delivery ETA Prediction & Logistics SLAs",
+        "tagline": "Real-Time Delivery ETA Prediction & Promise Windows",
         "description": (
-            "Predicts delivery duration as calibrated P10/P50/P90 quantiles "
-            "via Pinball Loss, enabling SLA-compliant customer-facing "
-            "delivery windows under peak congestion."
+            "Estimates how long each order will take from the order, the "
+            "store, the market and live dispatch load. Returns an expected "
+            "time (P50) with a P10 to P90 promise window, validated forward "
+            "in time and scored once on a held-out week, with the window's "
+            "measured coverage reported as-is."
         ),
         "status": "live",
-        "metrics": ["10.29 min MAE", "86.70% P90 coverage", "196K deliveries"],
+        "metrics": ["9.97 min MAE", "88.2% P90 coverage", "192.7K deliveries"],
         "tags": ["Quantile Regression", "LightGBM", "Pinball Loss", "SHAP"],
         "url": "https://foodops-delivery.streamlit.app/",
     },
@@ -117,7 +119,7 @@ stat_cols = st.columns(4)
 stat_values = [
     ("4", "Operational Modules"),
     ("28.61%", "DemandOps WAPE"),
-    ("10.29 min", "DeliveryOps MAE"),
+    ("9.97 min", "DeliveryOps MAE"),
     (f"{live_count}/4", "Modules Live"),
 ]
 for col, (value, label) in zip(stat_cols, stat_values):
