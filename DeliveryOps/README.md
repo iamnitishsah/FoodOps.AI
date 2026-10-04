@@ -108,7 +108,7 @@ The dataset has no weather, traffic or GPS information. Routing enters only thro
 
 ### Cleaning
 
-Timestamps are converted from UTC to US/Pacific, where all six markets peak at the same local hours. Cleaning removes **4,698 rows (2.38% of raw)**, each step logged in `cleaning_log_final.csv`:
+Timestamps are converted from UTC to America/Los_Angeles, where all six markets peak at the same local hours. Cleaning removes **4,698 rows (2.38% of raw)**, each step logged in `cleaning_log_final.csv`:
 
 | Step | Rows removed | % of raw | Reason |
 | :--- | ---: | ---: | :--- |
@@ -182,7 +182,7 @@ Implemented in [`notebooks/feature_engineering.ipynb`](./notebooks/feature_engin
 
 ### 5.1 Time and scope
 
-Local hour (7–22) and weekday (0 = Monday) are derived from the US/Pacific timestamp. The 46 orders placed in hours 6 and 23 and the 19 orders on protocol 7 are dropped, since there are too few of them to learn a pattern. The split into train and test happens at local midnight on 2015-02-11.
+Local hour (7–22) and weekday (0 = Monday) are derived from the America/Los_Angeles timestamp. The 46 orders placed in hours 6 and 23 and the 19 orders on protocol 7 are dropped, since there are too few of them to learn a pattern. The split into train and test happens at local midnight on 2015-02-11.
 
 ### 5.2 Features (20 in the final model)
 
