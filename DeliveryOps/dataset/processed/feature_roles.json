@@ -1,0 +1,261 @@
+{
+  "target": [
+    "total_delivery_duration"
+  ],
+  "bookkeeping_not_features": [
+    "raw_row_id",
+    "created_at",
+    "created_at_local",
+    "order_date",
+    "actual_delivery_time",
+    "split"
+  ],
+  "high_cardinality_encode_only": [
+    "store_id"
+  ],
+  "categorical": [
+    "market_id",
+    "order_protocol",
+    "store_primary_category",
+    "meal_period"
+  ],
+  "categorical_levels": {
+    "market_id": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "order_protocol": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "store_primary_category": [
+      "afghan",
+      "african",
+      "alcohol",
+      "alcohol-plus-food",
+      "american",
+      "argentine",
+      "asian",
+      "barbecue",
+      "belgian",
+      "brazilian",
+      "breakfast",
+      "british",
+      "bubble-tea",
+      "burger",
+      "burmese",
+      "cafe",
+      "cajun",
+      "caribbean",
+      "catering",
+      "cheese",
+      "chinese",
+      "chocolate",
+      "comfort-food",
+      "convenience-store",
+      "dessert",
+      "dim-sum",
+      "ethiopian",
+      "european",
+      "fast",
+      "filipino",
+      "french",
+      "gastropub",
+      "german",
+      "gluten-free",
+      "greek",
+      "hawaiian",
+      "indian",
+      "indonesian",
+      "irish",
+      "italian",
+      "japanese",
+      "korean",
+      "kosher",
+      "latin-american",
+      "lebanese",
+      "malaysian",
+      "mediterranean",
+      "mexican",
+      "middle-eastern",
+      "moroccan",
+      "nepalese",
+      "other",
+      "pakistani",
+      "pasta",
+      "persian",
+      "peruvian",
+      "pizza",
+      "russian",
+      "salad",
+      "sandwich",
+      "seafood",
+      "singaporean",
+      "smoothie",
+      "soup",
+      "southern",
+      "spanish",
+      "steak",
+      "sushi",
+      "tapas",
+      "thai",
+      "turkish",
+      "unknown",
+      "vegan",
+      "vegetarian",
+      "vietnamese"
+    ],
+    "meal_period": [
+      "morning",
+      "midday",
+      "dinner",
+      "late_night"
+    ]
+  },
+  "categorical_storage_note": "store_primary_category and meal_period are stored as category. market_id and order_protocol are int8 in the file (parquet drops integer category dtype); cast them with categorical_levels in the model notebooks.",
+  "numeric": [
+    "total_items",
+    "subtotal",
+    "num_distinct_items",
+    "min_item_price",
+    "max_item_price",
+    "total_onshift_dashers",
+    "total_busy_dashers",
+    "total_outstanding_orders",
+    "estimated_order_place_duration",
+    "estimated_store_to_consumer_driving_duration",
+    "order_hour",
+    "order_day_of_week"
+  ],
+  "numeric_engineered": [
+    "hour_sin",
+    "hour_cos",
+    "busy_dasher_ratio",
+    "outstanding_order_ratio",
+    "busy_dasher_ratio_capped",
+    "store_target_enc"
+  ],
+  "onehot_dow": [
+    "dow_0",
+    "dow_1",
+    "dow_2",
+    "dow_3",
+    "dow_4",
+    "dow_5",
+    "dow_6"
+  ],
+  "flags": [
+    "store_category_imputed",
+    "dasher_telemetry_missing",
+    "zero_onshift"
+  ],
+  "features": [
+    "market_id",
+    "order_protocol",
+    "store_primary_category",
+    "meal_period",
+    "total_items",
+    "subtotal",
+    "num_distinct_items",
+    "min_item_price",
+    "max_item_price",
+    "total_onshift_dashers",
+    "total_busy_dashers",
+    "total_outstanding_orders",
+    "estimated_order_place_duration",
+    "estimated_store_to_consumer_driving_duration",
+    "order_hour",
+    "order_day_of_week",
+    "hour_sin",
+    "hour_cos",
+    "busy_dasher_ratio",
+    "outstanding_order_ratio",
+    "busy_dasher_ratio_capped",
+    "store_target_enc",
+    "dow_0",
+    "dow_1",
+    "dow_2",
+    "dow_3",
+    "dow_4",
+    "dow_5",
+    "dow_6",
+    "store_category_imputed",
+    "dasher_telemetry_missing",
+    "zero_onshift"
+  ],
+  "nullable_columns": [
+    "total_onshift_dashers",
+    "total_busy_dashers",
+    "total_outstanding_orders",
+    "busy_dasher_ratio",
+    "outstanding_order_ratio",
+    "busy_dasher_ratio_capped"
+  ],
+  "ablation_note": "Each group lists alternative column sets that carry overlapping information. Compare them instead of stacking blindly; a linear baseline should use one weekday form only.",
+  "ablation_groups": {
+    "hour": [
+      [
+        "order_hour"
+      ],
+      [
+        "hour_sin",
+        "hour_cos"
+      ],
+      [
+        "meal_period"
+      ]
+    ],
+    "weekday": [
+      [
+        "order_day_of_week"
+      ],
+      [
+        "dow_0",
+        "dow_1",
+        "dow_2",
+        "dow_3",
+        "dow_4",
+        "dow_5",
+        "dow_6"
+      ]
+    ],
+    "busy_ratio": [
+      [
+        "busy_dasher_ratio"
+      ],
+      [
+        "busy_dasher_ratio_capped"
+      ]
+    ],
+    "order_place_estimate": [
+      [
+        "estimated_order_place_duration"
+      ],
+      []
+    ],
+    "zero_onshift_flag": [
+      [
+        "zero_onshift"
+      ],
+      []
+    ]
+  },
+  "serving_notes": [
+    "Orders created before 07:00 or from 23:00 local (hours 6 and 23) were dropped in training; the app needs a fallback.",
+    "order_protocol 7 was dropped (19 train rows, none in test); the app must map or reject it.",
+    "Rows with a missing market_id, order_protocol or drive estimate were dropped in training; the app needs a fallback for each.",
+    "store_target_enc: use store_target_encoding.joblib; a store_id not in its table gets the stored prior (train mean, seconds).",
+    "Dasher telemetry missing: the three dasher columns and the three ratios are NaN and dasher_telemetry_missing = 1.",
+    "onshift == 0 with telemetry: the three ratios are NaN and zero_onshift = 1.",
+    "Missing store category: 'unknown' with store_category_imputed = 1 (filled from the store's category only when it has exactly one known category).",
+    "Scope: deliveries of 15 minutes to 2 hours; every metric applies to that scope only."
+  ]
+}

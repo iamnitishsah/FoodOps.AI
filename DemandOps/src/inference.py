@@ -4,7 +4,7 @@ Serves the LightGBM model trained in ``notebooks/model_training.ipynb``.
 
 The model's inputs are mostly history features (lags, rolling stats), so serving
 means rebuilding them from a (center, meal) history with exactly the definitions
-used in ``notebooks/feature_engineering.ipynb``. ``check_feature_parity`` proves
+used in ``notebooks/feature_engineering_v1.ipynb``. ``check_feature_parity`` proves
 that against the saved parquet; the app runs it at start-up.
 
 Forecast modes
@@ -103,7 +103,7 @@ def predict_log(bundle: Dict[str, Any], rows: pd.DataFrame) -> np.ndarray:
 
 
 # ------------------------------------------------------------------------------
-# Feature rebuilding (must mirror feature_engineering.ipynb)
+# Feature rebuilding (must mirror feature_engineering_v1.ipynb)
 # ------------------------------------------------------------------------------
 def week_of_year(week: int) -> int:
     return ((int(week) - 1) % 52) + 1
